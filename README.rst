@@ -15,9 +15,10 @@ Examples
 
 References
 ================
-* restkit_
+* `Best Practical RT`_
 * `REST - Request Tracker Wiki`_
+* restkit_
 
 .. _Best Practical RT: http://bestpractical.com/rt/
-.. _restkit: http://restkit.org/
 .. _REST - Request Tracker Wiki: http://requesttracker.wikia.com/wiki/REST
+.. _restkit: http://restkit.org/

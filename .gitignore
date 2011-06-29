@@ -17,3 +17,4 @@ erl_crash.dump
 Documentation/
 .tox/
 .ropeproject/
+.idea/
