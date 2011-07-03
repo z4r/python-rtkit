@@ -8,6 +8,7 @@ __version__ =  ".".join(map(str, version_info))
 
 try:
     from resource import RTResource
+    from errors import *
 except ImportError:
     import traceback
     traceback.print_exc()
