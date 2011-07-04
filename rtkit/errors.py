@@ -1,27 +1,28 @@
 import re
-from restkit.errors import ResourceError, ResourceNotFound
+from restkit.errors import ResourceError as RTResourceError
+from restkit.errors import ResourceNotFound as RTNotFoundError
 
 
-class RTUnknownTypeError(ResourceError):
+
+
+class RTUnknownTypeError(RTResourceError):
     pass
 
 
-class RTInvalidError(ResourceError):
+class RTInvalidError(RTResourceError):
     pass
 
 
-class RTNotFoundError(ResourceNotFound):
+class RTValueError(RTResourceError):
     pass
 
-
-class RTValueError(ResourceError):
-    pass
 
 __all__ = [
-    RTUnknownTypeError,
-    RTInvalidError,
-    RTNotFoundError,
-    RTValueError,
+    'RTUnknownTypeError',
+    'RTInvalidError',
+    'RTNotFoundError',
+    'RTValueError',
+    'RTResourceError',
 ]
 
 UNKNOWN_PATTERN = '# Unknown object type: (?P<t>.+)'

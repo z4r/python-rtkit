@@ -35,20 +35,19 @@ class RTResource(Resource):
         pstr = ['{0}: {1}'.format(k,v) for k,v in payload.iteritems()]
         return u'content={0}\n'.format('\n'.join(pstr))
 
-    
+
 class RTResponse(Response):
     HEADER_PATTERN = '^RT/(?P<version>\d+\.\d+\.\d+)\s+(?P<status>(?P<status_int>\d+)\s+\w+)'
     HEADER = re.compile(HEADER_PATTERN)
 
     def __init__(self, connection, request, resp):
-        if resp.status == 200:
-            resp_header = resp.body.read()
+        if resp.status_int == 200:
+            resp_header = resp.body.next()
             r = self.HEADER.match(resp_header)
             if r:
                 resp.version    = tuple([int(v) for v in r.group('version').split('.')])
                 resp.status     = r.group('status')
                 resp.status_int = int(r.group('status_int'))
-                print resp.__dict__
             else:
                 resp.status     = resp_header
                 resp.status_int = 500
@@ -69,19 +68,14 @@ class RTResponse(Response):
         '''
         ret = {}
         for line in lines:
-            try:
-                k,v = line.split(': ', 1)
-                ret[k] = v
-            except ValueError:
-                k = line.rstrip(':')
-                ret[k] = ''
+            k,v = line.split(':', 1)
+            ret[k] = v.lstrip(' ')
         return ret
 
     @classmethod
     def build_lines(cls, body):
         '''Build logical lines as RFC822
         >>> body = """
-        ... RT/3.8.10 200 Ok
         ...
         ... spam: 1
         ... ham: 2,
@@ -92,7 +86,7 @@ class RTResponse(Response):
         '''
         logic_lines = []
         for line in body.splitlines():
-            if not len(line) or cls.HEADER.match(line):
+            if not len(line):
                 continue
             elif line[0].isspace():
                logic_lines[-1] += line.lstrip(' ')
