@@ -1,6 +1,7 @@
 import re
 from restkit import Resource, Response
 import errors
+from ordereddict import OrderedDict
 
 USER_AGENT = 'pyRTkit/{0}'.format('0.0.1')
 
@@ -28,9 +29,9 @@ class RTResource(Resource):
     @staticmethod
     def encode(payload):
         r'''Encode a dictionary into a valid RT query string
-        >>> payload = {'a': 1, 'b':2, 'c':3, }
+        >>> payload = {'spam': 1, 'ham':2, 'eggs':3, }
         >>> RTResource.encode(payload)
-        u'content=a: 1\nc: 3\nb: 2\n'
+        u'content=eggs: 3\nham: 2\nspam: 1\n'
         '''
         pstr = ['{0}: {1}'.format(k,v) for k,v in payload.iteritems()]
         return u'content={0}\n'.format('\n'.join(pstr))
@@ -53,27 +54,93 @@ class RTResponse(Response):
                 resp.status_int = 500
         super(RTResponse, self).__init__(connection, request, resp)
 
+    @property
     def single(self):
-        lines = self.build_lines(self.body_string())
+        return self._single(self.body_string())
+
+    @property
+    def query(self):
+        return self._query(self.body_string())
+
+    @property
+    def detailed_query(self):
+        return self._detailed_query(self.body_string())
+
+    @classmethod
+    def _single(cls, body):
+        '''Return an ordered dictionary representing a single resourse's attributes
+        >>> body = """
+        ...
+        ... spam: 1
+        ... ham: 2,
+        ...     3
+        ... eggs:"""
+        >>> RTResponse._single(body)
+        OrderedDict([('spam', '1'), ('ham', '2,3'), ('eggs', '')])
+        >>> body = '# spam 1 does not exist.'
+        >>> RTResponse._single(body)
+        Traceback (most recent call last):
+            ...
+        ResourceNotFound: spam 1 does not exist
+        '''
+        lines = cls._build_lines(body)
         if lines and lines[0].startswith('#'):
             raise errors.parse(lines[0])
-        return self.decode(lines)
+        return cls._decode(lines)
+
+    @classmethod
+    def _query(cls, body):
+        '''Return a tuple list representing id, name of matching resourses
+        >>> body = """
+        ...
+        ... 1: spam
+        ... 2: ham
+        ... 3: eggs"""
+        >>> RTResponse._query(body)
+        [('1', 'spam'), ('2', 'ham'), ('3', 'eggs')]
+        >>> body = 'No matching results.'
+        >>> RTResponse._query(body)
+        []
+        '''
+        lines = cls._build_lines(body)
+        if errors.NO_MATCHING.match(lines[0]):
+            return []
+        return [(k, v) for k,v in cls._decode(lines).iteritems()]
+
+    @classmethod
+    def _detailed_query(cls, body):
+        '''Return a list of ordered dictionary representing matching resourses
+        >>> body = """
+        ... spam: 1
+        ... ham: 2
+        ... --
+        ... spam: 4
+        ... ham: 5"""
+        >>> RTResponse._detailed_query(body)
+        [OrderedDict([('spam', '1'), ('ham', '2')]), OrderedDict([('spam', '4'), ('ham', '5')])]
+        >>> body = 'No matching results.'
+        >>> RTResponse._detailed_query(body)
+        []
+        '''
+        lines = [cls._build_lines(b) for b in body.split('--')]
+        if errors.NO_MATCHING.match(lines[0][0]):
+            return []
+        return [cls._decode(line) for line in lines]
 
     @staticmethod
-    def decode(lines):
+    def _decode(lines):
         '''Decode valid key-value listed response
-        >>> d = RTResponse.decode(['spam: 1','ham: 2,3', 'eggs:'])
-        >>> d == {'spam': '1', 'ham': '2,3', 'eggs': ''}
-        True
+        >>> RTResponse._decode(['spam: 1','ham: 2,3', 'eggs:'])
+        OrderedDict([('spam', '1'), ('ham', '2,3'), ('eggs', '')])
         '''
-        ret = {}
+        ret = OrderedDict()
         for line in lines:
             k,v = line.split(':', 1)
             ret[k] = v.lstrip(' ')
         return ret
 
     @classmethod
-    def build_lines(cls, body):
+    def _build_lines(cls, body):
         '''Build logical lines as RFC822
         >>> body = """
         ...
@@ -81,7 +148,7 @@ class RTResponse(Response):
         ... ham: 2,
         ...     3
         ... egg:"""
-        >>> RTResponse.build_lines(body)
+        >>> RTResponse._build_lines(body)
         ['spam: 1', 'ham: 2,3', 'egg:']
         '''
         logic_lines = []
