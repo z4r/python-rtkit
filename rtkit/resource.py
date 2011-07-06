@@ -1,7 +1,7 @@
 import re
 from restkit import Resource, Response
 import errors
-from ordereddict import OrderedDict
+from itertools import ifilterfalse
 
 USER_AGENT = 'pyRTkit/{0}'.format('0.0.1')
 
@@ -14,10 +14,11 @@ class RTResource(Resource):
         headers = headers or dict()
         headers.setdefault('Accept', 'text/plain')
         headers.setdefault('User-Agent', USER_AGENT)
-        if payload:
-            if not hasattr(payload, 'read') and not isinstance(payload, basestring):
-                payload = self.encode(payload)
-                headers.setdefault('Content-Type', 'application/x-www-form-urlencoded')
+        if payload and not hasattr(payload, 'read') \
+            and not isinstance(payload, basestring):
+            payload = self.encode(payload)
+            headers.setdefault('Content-Type',
+                               'application/x-www-form-urlencoded')
         return super(RTResource, self).request(
             method,
             path=path,
@@ -40,6 +41,9 @@ class RTResource(Resource):
 class RTResponse(Response):
     HEADER_PATTERN = '^RT/(?P<version>\d+\.\d+\.\d+)\s+(?P<status>(?P<status_int>\d+)\s+\w+)'
     HEADER = re.compile(HEADER_PATTERN)
+    COMMENT_PATTERN = '^# '
+    COMMENT = re.compile(COMMENT_PATTERN)
+
 
     def __init__(self, connection, request, resp):
         if resp.status_int == 200:
@@ -59,12 +63,12 @@ class RTResponse(Response):
         return self._single(self.body_string())
 
     @property
-    def query(self):
-        return self._query(self.body_string())
+    def search(self):
+        return self._search(self.body_string())
 
     @property
     def detailed_query(self):
-        return self._detailed_query(self.body_string())
+        return self._detailed_search(self.body_string())
 
     @classmethod
     def _single(cls, body):
@@ -76,7 +80,7 @@ class RTResponse(Response):
         ...     3
         ... eggs:"""
         >>> RTResponse._single(body)
-        OrderedDict([('spam', '1'), ('ham', '2,3'), ('eggs', '')])
+        [('spam', '1'), ('ham', '2, 3'), ('eggs', '')]
         >>> body = '# spam 1 does not exist.'
         >>> RTResponse._single(body)
         Traceback (most recent call last):
@@ -84,79 +88,78 @@ class RTResponse(Response):
         ResourceNotFound: spam 1 does not exist
         '''
         lines = cls._build_lines(body)
-        if lines and lines[0].startswith('#'):
+        if lines and cls.COMMENT.match(lines[0]):
             raise errors.parse(lines[0])
         return cls._decode(lines)
 
     @classmethod
-    def _query(cls, body):
+    def _search(cls, body):
         '''Return a tuple list representing id, name of matching resourses
         >>> body = """
         ...
         ... 1: spam
         ... 2: ham
         ... 3: eggs"""
-        >>> RTResponse._query(body)
+        >>> RTResponse._search(body)
         [('1', 'spam'), ('2', 'ham'), ('3', 'eggs')]
         >>> body = 'No matching results.'
-        >>> RTResponse._query(body)
+        >>> RTResponse._search(body)
         []
         '''
         lines = cls._build_lines(body)
         if errors.NO_MATCHING.match(lines[0]):
             return []
-        return [(k, v) for k,v in cls._decode(lines).iteritems()]
+        return cls._decode(lines)
 
     @classmethod
-    def _detailed_query(cls, body):
-        '''Return a list of ordered dictionary representing matching resourses
+    def _detailed_search(cls, body):
+        '''Return a list of decoded lines representing matching resourses
         >>> body = """
         ... spam: 1
         ... ham: 2
         ... --
         ... spam: 4
         ... ham: 5"""
-        >>> RTResponse._detailed_query(body)
-        [OrderedDict([('spam', '1'), ('ham', '2')]), OrderedDict([('spam', '4'), ('ham', '5')])]
+        >>> RTResponse._detailed_search(body)
+        [[('spam', '1'), ('ham', '2')], [('spam', '4'), ('ham', '5')]]
         >>> body = 'No matching results.'
-        >>> RTResponse._detailed_query(body)
+        >>> RTResponse._detailed_search(body)
         []
         '''
-        lines = [cls._build_lines(b) for b in body.split('--')]
-        if errors.NO_MATCHING.match(lines[0][0]):
+        lines_list = [cls._build_lines(b) for b in body.split('--')]
+        if errors.NO_MATCHING.match(lines_list[0][0]):
             return []
-        return [cls._decode(line) for line in lines]
-
-    @staticmethod
-    def _decode(lines):
-        '''Decode valid key-value listed response
-        >>> RTResponse._decode(['spam: 1','ham: 2,3', 'eggs:'])
-        OrderedDict([('spam', '1'), ('ham', '2,3'), ('eggs', '')])
-        '''
-        ret = OrderedDict()
-        for line in lines:
-            k,v = line.split(':', 1)
-            ret[k] = v.lstrip(' ')
-        return ret
+        return [cls._decode(lines) for lines in lines_list]
 
     @classmethod
-    def _build_lines(cls, body):
+    def _decode(cls, lines):
+        '''Return a 2-tuples list skipping comment
+        >>> RTResponse._decode(['# c1 c2', 'spam: 1', 'ham: 2, 3', 'eggs:'])
+        [('spam', '1'), ('ham', '2, 3'), ('eggs', '')]
+        '''
+        lines = ifilterfalse(cls.COMMENT.match, lines)
+        return [(k, v.strip(' ')) for k,v in [l.split(':', 1) for l in lines]]
+
+
+
+    @staticmethod
+    def _build_lines(body):
         '''Build logical lines as RFC822
         >>> body = """
-        ...
+        ... # c1
+        ...   c2
         ... spam: 1
+        ...
         ... ham: 2,
-        ...     3
-        ... egg:"""
+        ...     3  
+        ... eggs:"""
         >>> RTResponse._build_lines(body)
-        ['spam: 1', 'ham: 2,3', 'egg:']
+        ['# c1 c2', 'spam: 1', 'ham: 2, 3', 'eggs:']
         '''
         logic_lines = []
-        for line in body.splitlines():
-            if not len(line):
-                continue
-            elif line[0].isspace():
-               logic_lines[-1] += line.lstrip(' ')
+        for line in filter(None, body.splitlines()):
+            if line[0].isspace():
+               logic_lines[-1] += ' '+line.strip(' ')
             else:
                logic_lines.append(line)
         return logic_lines
