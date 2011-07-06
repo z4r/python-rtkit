@@ -40,5 +40,5 @@ References
 * restkit_
 
 .. _Best Practical RT: http://bestpractical.com/rt/
-.. _REST - Request Tracker Wiki: http://requesttracker.wikia.com/wiki/REST
+.. _Request Tracker Wiki: http://requesttracker.wikia.com/wiki/REST
 .. _restkit: http://restkit.org/
