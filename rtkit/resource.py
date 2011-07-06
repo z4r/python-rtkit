@@ -1,7 +1,9 @@
+from itertools import ifilterfalse
+import logging
 import re
+
 from restkit import Resource, Response
 import errors
-from itertools import ifilterfalse
 
 USER_AGENT = 'pyRTkit/{0}'.format('0.0.1')
 
@@ -9,6 +11,7 @@ class RTResource(Resource):
     def __init__(self, uri, **kwargs):
         kwargs['response_class'] = RTResponse
         super(RTResource, self).__init__(uri, **kwargs)
+        self.logger = logging.getLogger('rtkit')
 
     def request(self, method, path=None, payload=None, headers=None, **kwargs):
         headers = headers or dict()
@@ -19,6 +22,9 @@ class RTResource(Resource):
             payload = self.encode(payload)
             headers.setdefault('Content-Type',
                                'application/x-www-form-urlencoded')
+        self.logger.debug('{0} {1}'.format(method, path))
+        self.logger.debug(payload)
+        self.logger.debug(headers)
         return super(RTResource, self).request(
             method,
             path=path,
@@ -39,22 +45,21 @@ class RTResource(Resource):
 
 
 class RTResponse(Response):
-    HEADER_PATTERN = '^RT/(?P<version>\d+\.\d+\.\d+)\s+(?P<status>(?P<status_int>\d+)\s+\w+)'
+    HEADER_PATTERN = '^RT/(?P<v>\d+\.\d+\.\d+)\s+(?P<s>(?P<i>\d+)\s+\w+)'
     HEADER = re.compile(HEADER_PATTERN)
-    COMMENT_PATTERN = '^# '
+    COMMENT_PATTERN = '^#\s+'
     COMMENT = re.compile(COMMENT_PATTERN)
-
 
     def __init__(self, connection, request, resp):
         if resp.status_int == 200:
             resp_header = resp.body.next()
             r = self.HEADER.match(resp_header)
             if r:
-                resp.version    = tuple([int(v) for v in r.group('version').split('.')])
-                resp.status     = r.group('status')
-                resp.status_int = int(r.group('status_int'))
+                resp.version = tuple([int(v) for v in r.group('v').split('.')])
+                resp.status = r.group('s')
+                resp.status_int = int(r.group('i'))
             else:
-                resp.status     = resp_header
+                resp.status = resp_header
                 resp.status_int = 500
         super(RTResponse, self).__init__(connection, request, resp)
 
@@ -72,7 +77,7 @@ class RTResponse(Response):
 
     @classmethod
     def _single(cls, body):
-        '''Return an ordered dictionary representing a single resourse's attributes
+        '''Return an 2-tuple list representing resourse attributes
         >>> body = """
         ...
         ... spam: 1
@@ -133,14 +138,12 @@ class RTResponse(Response):
 
     @classmethod
     def _decode(cls, lines):
-        '''Return a 2-tuples list skipping comment
+        '''Return a 2-tuples list skipping comments
         >>> RTResponse._decode(['# c1 c2', 'spam: 1', 'ham: 2, 3', 'eggs:'])
         [('spam', '1'), ('ham', '2, 3'), ('eggs', '')]
         '''
         lines = ifilterfalse(cls.COMMENT.match, lines)
         return [(k, v.strip(' ')) for k,v in [l.split(':', 1) for l in lines]]
-
-
 
     @staticmethod
     def _build_lines(body):

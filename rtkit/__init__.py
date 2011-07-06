@@ -27,7 +27,7 @@ def set_logging(level, handler=None):
     loglevel = LOG_LEVELS.get(level, logging.INFO)
     logger = logging.getLogger('rtkit')
     logger.setLevel(loglevel)
-    format = r"%(asctime)s [%(process)d] [%(levelname)s] %(message)s"
+    format = r"[%(asctime)s] [%(levelname)s] %(message)s"
     datefmt = r"%Y-%m-%d %H:%M:%S"
 
     handler.setFormatter(logging.Formatter(format, datefmt))
