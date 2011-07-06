@@ -45,7 +45,7 @@ class RTResource(Resource):
 
 
 class RTResponse(Response):
-    HEADER_PATTERN = '^RT/(?P<v>\d+\.\d+\.\d+)\s+(?P<s>(?P<i>\d+)\s+\w+)'
+    HEADER_PATTERN = '^RT/(?P<v>\d+\.\d+\.\d+)\s+(?P<s>(?P<i>\d+)\s+\w+)$'
     HEADER = re.compile(HEADER_PATTERN)
     COMMENT_PATTERN = '^#\s+'
     COMMENT = re.compile(COMMENT_PATTERN)
@@ -53,7 +53,7 @@ class RTResponse(Response):
     def __init__(self, connection, request, resp):
         self.logger = logging.getLogger('rtkit')
         if resp.status_int == 200:
-            resp_header = resp.body.next()
+            resp_header = resp.body.next().strip()
             self.logger.debug(resp_header)
             r = self.HEADER.match(resp_header)
             if r:
@@ -66,105 +66,67 @@ class RTResponse(Response):
         super(RTResponse, self).__init__(connection, request, resp)
 
     @property
-    def single(self):
-        return self._single(self.body_string())
-
-    @property
-    def search(self):
-        return self._search(self.body_string())
-
-    @property
-    def detailed_query(self):
-        return self._detailed_search(self.body_string())
+    def parsed(self):
+        '''Return a list of 2-tuples lists representing resourses' attributes
+        '''
+        return self._parse(self.body_string())
 
     @classmethod
-    def _single(cls, body):
-        '''Return an 2-tuple list representing resourse attributes
+    def _parse(cls, body):
+        '''Return a list of RFC822 section
         >>> body = """
         ...
         ... spam: 1
         ... ham: 2,
         ...     3
         ... eggs:"""
-        >>> RTResponse._single(body)
-        [('spam', '1'), ('ham', '2, 3'), ('eggs', '')]
-        >>> body = '# spam 1 does not exist.'
-        >>> RTResponse._single(body)
-        Traceback (most recent call last):
-            ...
-        ResourceNotFound: spam 1 does not exist
-        '''
-        lines = cls._build_lines(body)
-        if lines and cls.COMMENT.match(lines[0]):
-            raise errors.parse(lines[0])
-        return cls._decode(lines)
-
-    @classmethod
-    def _search(cls, body):
-        '''Return a tuple list representing id, name of matching resourses
-        >>> body = """
-        ...
-        ... 1: spam
-        ... 2: ham
-        ... 3: eggs"""
-        >>> RTResponse._search(body)
-        [('1', 'spam'), ('2', 'ham'), ('3', 'eggs')]
-        >>> body = 'No matching results.'
-        >>> RTResponse._search(body)
+        >>> RTResponse._parse(body)
+        [[('spam', '1'), ('ham', '2, 3'), ('eggs', '')]]
+        >>> RTResponse._parse('# spam 1 does not exist.')
         []
         '''
-        lines = cls._build_lines(body)
-        if errors.NO_MATCHING.match(lines[0]):
-            return []
-        return cls._decode(lines)
-
-    @classmethod
-    def _detailed_search(cls, body):
-        '''Return a list of decoded lines representing matching resourses
-        >>> body = """
-        ... spam: 1
-        ... ham: 2
-        ... --
-        ... spam: 4
-        ... ham: 5"""
-        >>> RTResponse._detailed_search(body)
-        [[('spam', '1'), ('ham', '2')], [('spam', '4'), ('ham', '5')]]
-        >>> body = 'No matching results.'
-        >>> RTResponse._detailed_search(body)
-        []
-        '''
-        lines_list = [cls._build_lines(b) for b in body.split('--')]
-        if errors.NO_MATCHING.match(lines_list[0][0]):
-            return []
-        return [cls._decode(lines) for lines in lines_list]
+        section = cls._build(body)
+        if len(section) == 1:
+            try:
+                errors.check(section[0])
+            except errors.ResourceNotFound:
+                return []
+        return [cls._decode(lines) for lines in section]
 
     @classmethod
     def _decode(cls, lines):
-        '''Return a 2-tuples list skipping comments
+        '''Return a list of 2-tuples as described in RFC822
+        >>> l = [['# a b', 'spam: 1', 'ham: 2, 3'], ['# c', 'spam: 4', 'ham:']]
         >>> RTResponse._decode(['# c1 c2', 'spam: 1', 'ham: 2, 3', 'eggs:'])
         [('spam', '1'), ('ham', '2, 3'), ('eggs', '')]
         '''
         lines = ifilterfalse(cls.COMMENT.match, lines)
         return [(k, v.strip(' ')) for k,v in [l.split(':', 1) for l in lines]]
 
-    @staticmethod
-    def _build_lines(body):
-        '''Build logical lines as RFC822
+    @classmethod
+    def _build(cls, body):
+        '''Build logical lines of a RFC822
         >>> body = """
-        ... # c1
-        ...   c2
+        ... # a
+        ...   b
         ... spam: 1
-        ...
+        ... 
         ... ham: 2,
-        ...     3  
-        ... eggs:"""
-        >>> RTResponse._build_lines(body)
-        ['# c1 c2', 'spam: 1', 'ham: 2, 3', 'eggs:']
+        ...     3
+        ... --
+        ... # c
+        ... spam: 4
+        ... ham:
+        ... """
+        >>> RTResponse._build(body)
+        [['# a b', 'spam: 1', 'ham: 2, 3'], ['# c', 'spam: 4', 'ham:']]
         '''
-        logic_lines = []
-        for line in filter(None, body.splitlines()):
-            if line[0].isspace():
-               logic_lines[-1] += ' '+line.strip(' ')
-            else:
-               logic_lines.append(line)
-        return logic_lines
+        def build_section(section):
+            logic_lines = []
+            for line in filter(None, section.splitlines()):
+                if line[0].isspace():
+                   logic_lines[-1] += ' '+line.strip(' ')
+                else:
+                   logic_lines.append(line)
+            return logic_lines
+        return [build_section(b) for b in body.split('--')]
