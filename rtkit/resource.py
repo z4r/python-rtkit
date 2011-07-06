@@ -23,8 +23,8 @@ class RTResource(Resource):
             headers.setdefault('Content-Type',
                                'application/x-www-form-urlencoded')
         self.logger.debug('{0} {1}'.format(method, path))
-        self.logger.debug(payload)
         self.logger.debug(headers)
+        self.logger.debug('%r'%payload)
         return super(RTResource, self).request(
             method,
             path=path,
@@ -51,8 +51,10 @@ class RTResponse(Response):
     COMMENT = re.compile(COMMENT_PATTERN)
 
     def __init__(self, connection, request, resp):
+        self.logger = logging.getLogger('rtkit')
         if resp.status_int == 200:
             resp_header = resp.body.next()
+            self.logger.debug(resp_header)
             r = self.HEADER.match(resp_header)
             if r:
                 resp.version = tuple([int(v) for v in r.group('v').split('.')])
