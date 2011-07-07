@@ -1,7 +1,6 @@
 from itertools import ifilterfalse
 import logging
 import re
-
 from restkit import Resource, Response
 import errors
 
@@ -45,13 +44,14 @@ class RTResource(Resource):
 
 
 class RTResponse(Response):
-    HEADER_PATTERN = '^RT/(?P<v>\d+\.\d+\.\d+)\s+(?P<s>(?P<i>\d+)\s+\w+)$'
+    HEADER_PATTERN = '^RT/(?P<v>\d+\.\d+\.\d+)\s+(?P<s>(?P<i>\d+).+)$'
     HEADER = re.compile(HEADER_PATTERN)
     COMMENT_PATTERN = '^#\s+'
     COMMENT = re.compile(COMMENT_PATTERN)
 
     def __init__(self, connection, request, resp):
         self.logger = logging.getLogger('rtkit')
+        self.logger.info('HTTP_STATUS: {0}'.format(resp.status))
         if resp.status_int == 200:
             resp_header = resp.body.next().strip()
             self.logger.debug(resp_header)
@@ -61,21 +61,26 @@ class RTResponse(Response):
                 resp.status = r.group('s')
                 resp.status_int = int(r.group('i'))
             else:
+                self.logger.error('"{0}" is not valid'.format(resp_header))
                 resp.status = resp_header
                 resp.status_int = 500
         super(RTResponse, self).__init__(connection, request, resp)
+        self.logger.info('RESOURCE_STATUS: {0}'.format(self.status))
 
     @property
     def parsed(self):
         '''Return a list of 2-tuples lists representing resourses' attributes
         '''
-        return self._parse(self.body_string())
+        body = self.body_string()
+        self.logger.debug('%r'%body)
+        return self._parse(body)
 
     @classmethod
     def _parse(cls, body):
         '''Return a list of RFC822 section
         >>> body = """
         ...
+        ... # c1
         ... spam: 1
         ... ham: 2,
         ...     3
@@ -90,7 +95,7 @@ class RTResponse(Response):
             try:
                 errors.check(section[0])
             except errors.ResourceNotFound:
-                return []
+                section = ''
         return [cls._decode(lines) for lines in section]
 
     @classmethod
