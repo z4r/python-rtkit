@@ -14,24 +14,23 @@ Rest Api Summary
 ================
 More detailed version: `Request Tracker Wiki`_
 
-**Get**::
+::
 
- ticket/<ticket-id>                                     | Gets the data for a single ticket
- ticket/<ticket-id>/links                               | Gets the ticket links
- ticket/<ticket-id>/attachments                         | Gets a list of all ticket attachments
- ticket/<ticket-id>/attachments/<attachment-id>         | Gets the attachment data and content
- ticket/<ticket-id>/attachments/<attachment-id>/content | Gets the attachment content
- ticket/<ticket-id>/history                             | Gets a list of all ticket history
- ticket/<ticket-id>/history?format=l                    | Gets a detailed list of all ticket history
- ticket/<ticket-id>/history/id/<history-id>             | Gets the history item data
- user/<user-id>                                         | Gets the data for a single user
- user/<user-Name>                                       | Gets the data for a single user
- queue/<queue-id>                                       | Gets the data for a single queue
- queue/<queue-Name>                                     | Gets the data for a single queue
-
-**Search**::
-
- search/ticket?query=<query>&orderby=<sort-order>&format=<format>
+ [01] ticket/new                                                         | W
+ [02] ticket/<ticket-id>                                                 | RW
+ [03] ticket/<ticket-id>/comment                                         | W
+ [04] ticket/<ticket-id>/links                                           | RW
+ [05] ticket/<ticket-id>/attachments                                     | R
+ [06] ticket/<ticket-id>/attachments/<attachment-id>                     | R
+ [07] ticket/<ticket-id>/attachments/<attachment-id>/content             | R
+ [08] ticket/<ticket-id>/history                                         | R
+ [09] ticket/<ticket-id>/history?format=l                                | R
+ [10] ticket/<ticket-id>/history/id/<history-id>                         | R
+ [11] user/<user-id>                                                     | R
+ [12] user/<user-Name>                                                   | R
+ [13] queue/<queue-id>                                                   | R
+ [14] queue/<queue-Name>                                                 | R
+ [15] search/ticket?query=<query>&orderby=<sort-order>&format=<format>   | R
 
 References
 ================

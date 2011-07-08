@@ -77,7 +77,7 @@ class RTResponse(Response):
 
     @classmethod
     def _parse(cls, body):
-        '''Return a list of RFC822 section
+        '''Return a list of RFC5322-like section
         >>> body = """
         ...
         ... # c1
@@ -100,7 +100,7 @@ class RTResponse(Response):
 
     @classmethod
     def _decode(cls, lines):
-        '''Return a list of 2-tuples as described in RFC822
+        '''Return a list of 2-tuples parsing 'k: v' and skipping comments
         >>> l = [['# a b', 'spam: 1', 'ham: 2, 3'], ['# c', 'spam: 4', 'ham:']]
         >>> RTResponse._decode(['# c1 c2', 'spam: 1', 'ham: 2, 3', 'eggs:'])
         [('spam', '1'), ('ham', '2, 3'), ('eggs', '')]
@@ -110,7 +110,7 @@ class RTResponse(Response):
 
     @classmethod
     def _build(cls, body):
-        '''Build logical lines of a RFC822
+        '''Build logical lines from a RFC5322-like string
         >>> body = """
         ... # a
         ...   b
