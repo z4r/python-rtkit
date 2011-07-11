@@ -63,10 +63,10 @@ Low Level Layer Examples
          payload=content,
      )
      logger.info(response.parsed)
-except RTResourceError as e:
-    logger.error(e.response.status_int)
-    logger.error(e.response.status)
-    logger.error(e.response.parsed)
+ except RTResourceError as e:
+     logger.error(e.response.status_int)
+     logger.error(e.response.status)
+     logger.error(e.response.parsed)
 
 ::
 
