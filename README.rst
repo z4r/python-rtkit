@@ -52,15 +52,14 @@ Low Level Layer Examples
      message = '''My useless
  text on
  three lines.'''
-     message= '\n'.join(' '+m for m in message.splitlines())
-     id = 1
-     tw = 5
+     message = '\n'.join(' '+m for m in message.splitlines())
      content = {
          'Queue': 1,
-         'Subject : 'New Ticket',
+         'Subject' : 'New Ticket',
+         'Text' = message
      }
      response = resource.post(
-         path='ticket/new'.format(id),
+         path='ticket/new',
          payload=content,
      )
      logger.info(response.parsed)
