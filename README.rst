@@ -31,7 +31,7 @@ More detailed version: `Request Tracker Wiki`_
 
 Low Level Layer Examples
 ================
-Connection using Basic Authentication
+0) Connection using Basic Authentication
 
 ::
 
@@ -43,6 +43,30 @@ Connection using Basic Authentication
  logger = logging.getLogger('rtkit')
  auth = BasicAuth(<USER>, <PWD>)
  resource = RTResource('http://<HOST>/REST/1.0/',filters=[auth,])
+
+1) Create ticket
+
+::
+
+ try:
+     message = '''My useless
+ text on
+ three lines.'''
+     message= '\n'.join(' '+m for m in message.splitlines())
+     id = 1
+     tw = 5
+     content = {
+         'Queue': 1,
+         'Subject : 'New Ticket',
+     }
+     response = resource.post(
+         path='ticket/new'.format(id),
+         payload=content,
+     )
+     logger.info(response.parsed)
+ except RTResourceError as e:
+     logger.error(e.status_int)
+     logger.error('%r'%e.msg)
 
 References
 ================
