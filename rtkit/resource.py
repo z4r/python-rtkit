@@ -44,36 +44,33 @@ class RTResource(Resource):
 
 
 class RTResponse(Response):
-    HEADER_PATTERN = '^RT/(?P<v>\d+\.\d+\.\d+)\s+(?P<s>(?P<i>\d+).+)$'
+    HEADER_PATTERN = '^RT/(?P<v>\d+\.\d+\.\d+)\s+(?P<s>(?P<i>\d+).+)'
     HEADER = re.compile(HEADER_PATTERN)
-    COMMENT_PATTERN = '^#\s+'
+    COMMENT_PATTERN = '^#\s+.+$'
     COMMENT = re.compile(COMMENT_PATTERN)
 
     def __init__(self, connection, request, resp):
-        self.logger = logging.getLogger('rtkit')
-        self.logger.info('HTTP_STATUS: {0}'.format(resp.status))
-        if resp.status_int == 200:
-            resp_header = resp.body.next().strip()
-            self.logger.debug(resp_header)
-            r = self.HEADER.match(resp_header)
-            if r:
-                resp.version = tuple([int(v) for v in r.group('v').split('.')])
-                resp.status = r.group('s')
-                resp.status_int = int(r.group('i'))
-            else:
-                self.logger.error('"{0}" is not valid'.format(resp_header))
-                resp.status = resp_header
-                resp.status_int = 500
         super(RTResponse, self).__init__(connection, request, resp)
-        self.logger.info('RESOURCE_STATUS: {0}'.format(self.status))
-
-    @property
-    def parsed(self):
-        '''Return a list of 2-tuples lists representing resourses' attributes
-        '''
-        body = self.body_string()
+        self.logger = logging.getLogger('rtkit')
+        self.logger.info('HTTP_STATUS: {0}'.format(self.status))
+        body = self._body.read()
+        r = self.HEADER.match(body)
+        if r:
+            self.version = tuple([int(v) for v in r.group('v').split('.')])
+            self.status = r.group('s')
+            self.status_int = int(r.group('i'))
+        else:
+            self.logger.error('"{0}" is not valid'.format(body))
+            self.status = body
+            self.status_int = 500
         self.logger.debug('%r'%body)
-        return self._parse(body)
+        try:
+            self.parsed = self._parse(body)
+        except errors.RTResourceError as e:
+            self.parsed = []
+            self.status_int = e.status_int
+            self.status = '{0} {1}'.format(e.status_int, e.msg)
+        self.logger.info('RESOURCE_STATUS: {0}'.format(self.status))
 
     @classmethod
     def _parse(cls, body):
@@ -96,6 +93,8 @@ class RTResponse(Response):
                 errors.check(section[0])
             except errors.ResourceNotFound:
                 section = ''
+            except errors.RTCreated as e:
+                section = [['id: {0}'.format(e.id)]]
         return [cls._decode(lines) for lines in section]
 
     @classmethod
@@ -104,6 +103,7 @@ class RTResponse(Response):
         >>> l = [['# a b', 'spam: 1', 'ham: 2, 3'], ['# c', 'spam: 4', 'ham:']]
         >>> RTResponse._decode(['# c1 c2', 'spam: 1', 'ham: 2, 3', 'eggs:'])
         [('spam', '1'), ('ham', '2, 3'), ('eggs', '')]
+        >>>
         '''
         lines = ifilterfalse(cls.COMMENT.match, lines)
         return [(k, v.strip(' ')) for k,v in [l.split(':', 1) for l in lines]]
@@ -111,7 +111,8 @@ class RTResponse(Response):
     @classmethod
     def _build(cls, body):
         '''Build logical lines from a RFC5322-like string
-        >>> body = """
+        >>> body = """RT/1.2.3 200 Ok
+        ...
         ... # a
         ...   b
         ... spam: 1
@@ -129,6 +130,8 @@ class RTResponse(Response):
         def build_section(section):
             logic_lines = []
             for line in filter(None, section.splitlines()):
+                if cls.HEADER.match(line):
+                    continue
                 if line[0].isspace():
                    logic_lines[-1] += ' '+line.strip(' ')
                 else:

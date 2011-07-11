@@ -56,16 +56,41 @@ Low Level Layer Examples
      content = {
          'Queue': 1,
          'Subject' : 'New Ticket',
-         'Text' = message
+         'Text' : message,
      }
      response = resource.post(
          path='ticket/new',
          payload=content,
      )
      logger.info(response.parsed)
- except RTResourceError as e:
-     logger.error(e.status_int)
-     logger.error('%r'%e.msg)
+except RTResourceError as e:
+    logger.error(e.response.status_int)
+    logger.error(e.response.status)
+    logger.error(e.response.parsed)
+
+::
+
+ #OK
+ [2011-07-11 16:51:42][DEBUG] POST ticket/new
+ [2011-07-11 16:51:42][DEBUG] {'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'text/plain', 'User-Agent': 'pyRTkit/0.0.1'}
+ [2011-07-11 16:51:42][DEBUG] u'content=Queue: 1\nText:  My useless\n text on\n three lines.\nSubject: New Ticket\n'
+ [2011-07-11 16:51:42][INFO] HTTP_STATUS: 200 OK
+ [2011-07-11 16:51:42][INFO] RESOURCE_STATUS: 200 Ok
+ [2011-07-11 16:51:42][DEBUG] 'RT/3.8.10 200 Ok\n\n# Ticket 17 created.\n\n'
+ [2011-07-11 16:51:42][INFO] [[('id', 'ticket/17')]]
+
+::
+
+ #WRONG OR MISSING QUEUE
+ [2011-07-11 17:22:39][DEBUG] POST ticket/new
+ [2011-07-11 17:22:39][DEBUG] {'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'text/plain', 'User-Agent': 'pyRTkit/0.0.1'}
+ [2011-07-11 17:22:39][DEBUG] u'content=Queue: \nText:  My useless\n text on\n three lines.\nSubject: New Ticket\n'
+ [2011-07-11 17:22:39][INFO] HTTP_STATUS: 200 OK
+ [2011-07-11 17:22:39][DEBUG] 'RT/3.8.10 200 Ok\n\n# Could not create ticket.\n# Could not create ticket. Queue not set\n\n'
+ [2011-07-11 17:22:39][INFO] RESOURCE_STATUS: 400 Could not create ticket
+ [2011-07-11 17:22:39][ERROR] 400
+ [2011-07-11 17:22:39][ERROR] 400 Could not create ticket
+ [2011-07-11 17:22:39][ERROR] []
 
 References
 ================
