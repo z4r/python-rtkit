@@ -31,7 +31,10 @@ More detailed version: `Request Tracker Wiki`_
 
 Low Level Layer Examples
 ================
-Connection using Basic Authentication::
+Connection using Basic Authentication
+
+::
+
  from restkit.filters import BasicAuth
  from rtkit import RTResource, set_logging, RTResourceError
  import logging
