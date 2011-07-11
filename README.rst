@@ -7,30 +7,39 @@ python-rtkit
 Installation
 ================
 
-Examples
-================
-
 Rest Api Summary
 ================
 More detailed version: `Request Tracker Wiki`_
 
 ::
 
- [01] ticket/new                                                         | W
- [02] ticket/<ticket-id>                                                 | RW
- [03] ticket/<ticket-id>/comment                                         | W
- [04] ticket/<ticket-id>/links                                           | RW
- [05] ticket/<ticket-id>/attachments                                     | R
- [06] ticket/<ticket-id>/attachments/<attachment-id>                     | R
- [07] ticket/<ticket-id>/attachments/<attachment-id>/content             | R
- [08] ticket/<ticket-id>/history                                         | R
- [09] ticket/<ticket-id>/history?format=l                                | R
- [10] ticket/<ticket-id>/history/id/<history-id>                         | R
- [11] user/<user-id>                                                     | R
- [12] user/<user-Name>                                                   | R
- [13] queue/<queue-id>                                                   | R
- [14] queue/<queue-Name>                                                 | R
- [15] search/ticket?query=<query>&orderby=<sort-order>&format=<format>   | R
+ [01][-W] Create ticket                     | ticket/new
+ [02][RW] Read/Update ticket                | ticket/<ticket-id>
+ [03][-W] Create ticket comment             | ticket/<ticket-id>/comment
+ [04][RW] Read/Update ticket links          | ticket/<ticket-id>/links
+ [05][R-] Read ticket attachments           | ticket/<ticket-id>/attachments
+ [06][R-] Read ticket attachment            | ticket/<ticket-id>/attachments/<attachment-id>
+ [07][R-] Read ticket attachment content    | ticket/<ticket-id>/attachments/<attachment-id>/content
+ [08][R-] Read ticket history               | ticket/<ticket-id>/history
+ [09][R-] Read detailed ticket history      | ticket/<ticket-id>/history?format=l
+ [10][R-] Read ticket history item          | ticket/<ticket-id>/history/id/<history-id>
+ [11][R-] Read user by id                   | user/<user-id>
+ [12][R-] Read user by name                 | user/<user-Name>
+ [13][R-] Read queue by id                  | queue/<queue-id>
+ [14][R-] Read queue by name                | queue/<queue-Name>
+ [15][R-] Search tickets                    | search/ticket?query=<query>&orderby=<sort-order>&format=<format>
+
+Low Level Layer Examples
+================
+Connection using Basic Authentication::
+ from restkit.filters import BasicAuth
+ from rtkit import RTResource, set_logging, RTResourceError
+ import logging
+ 
+ set_logging('debug')
+ logger = logging.getLogger('rtkit')
+ auth = BasicAuth(<USER>, <PWD>)
+ resource = RTResource('http://<HOST>/REST/1.0/',filters=[auth,])
 
 References
 ================
