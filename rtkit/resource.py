@@ -66,7 +66,10 @@ class RTResponse(Response):
             self.status_int = 500
         self.logger.debug('%r'%body)
         try:
-            self.parsed = self._parse(body)
+            decode = self._decode
+            if self.status_int == 409:
+                decode = self._decode_comment
+            self.parsed = self._parse(body, decode)
         except RTResourceError as e:
             self.parsed = []
             self.status_int = e.status_int
@@ -74,8 +77,9 @@ class RTResponse(Response):
         self.logger.info('RESOURCE_STATUS: {0}'.format(self.status))
 
     @classmethod
-    def _parse(cls, body):
-        '''Return a list of RFC5322-like section
+    def _parse(cls, body, decode):
+        r'''Return a list of RFC5322-like section
+        >>> decode = RTResponse._decode
         >>> body = """
         ...
         ... # c1
@@ -83,31 +87,53 @@ class RTResponse(Response):
         ... ham: 2,
         ...     3
         ... eggs:"""
-        >>> RTResponse._parse(body)
+        >>> RTResponse._parse(body, decode)
         [[('spam', '1'), ('ham', '2, 3'), ('eggs', '')]]
-        >>> RTResponse._parse('# spam 1 does not exist.')
+        >>> RTResponse._parse('# spam 1 does not exist.', decode)
+        Traceback (most recent call last):
+            ...
+        RTNotFoundError: spam 1 does not exist
+        >>> RTResponse._parse('# Spam 1 created.', decode)
+        [[('id', 'spam/1')]]
+        >>> RTResponse._parse('No matching results.', decode)
         []
+        >>> decode = RTResponse._decode_comment
+        >>> RTResponse._parse('# spam: 1\n# ham: 2', decode)
+        [[('spam', '1'), ('ham', '2')]]
         '''
         section = cls._build(body)
         if len(section) == 1:
             try:
                 comment.check(section[0])
-            except RTNotFoundError:
+            except comment.RTNoMatch:
                 section = ''
             except comment.RTCreated as e:
                 section = [['id: {0}'.format(e.id)]]
-        return [cls._decode(lines) for lines in section]
+        return [decode(lines) for lines in section]
 
     @classmethod
     def _decode(cls, lines):
         '''Return a list of 2-tuples parsing 'k: v' and skipping comments
-        >>> l = [['# a b', 'spam: 1', 'ham: 2, 3'], ['# c', 'spam: 4', 'ham:']]
-        >>> RTResponse._decode(['# c1 c2', 'spam: 1', 'ham: 2, 3', 'eggs:'])
+        >>> RTResponse._decode(['# c1: c2', 'spam: 1', 'ham: 2, 3', 'eggs:'])
         [('spam', '1'), ('ham', '2, 3'), ('eggs', '')]
         >>>
         '''
         lines = ifilterfalse(cls.COMMENT.match, lines)
-        return [(k, v.strip(' ')) for k,v in [l.split(':', 1) for l in lines]]
+        return [(k, v.strip(' '))
+            for k,v in [l.split(':', 1)
+                for l in lines]]
+
+    @classmethod
+    def _decode_comment(cls, lines):
+        '''Return a list of 2-tuples parsing '# k: v'
+        >>> RTResponse._decode_comment(['# c1: c2', 'spam: 1', 'ham: 2, 3', 'eggs:'])
+        [('c1', 'c2')]
+        >>>
+        '''
+        lines = filter(cls.COMMENT.match, lines)
+        return [(k.strip('# '), v.strip(' '))
+            for k,v in [l.split(':', 1)
+                for l in lines]]
 
     @classmethod
     def _build(cls, body):

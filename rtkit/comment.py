@@ -17,11 +17,16 @@ NO_MATCHING_PATTERN = 'No matching results.'
 NO_MATCHING = re.compile(NO_MATCHING_PATTERN)
 CREATED_PATTERN = '# (?P<t>\w+) (?P<r>\d+) created.'
 CREATED = re.compile(CREATED_PATTERN)
+UNAUTHORIZED_PATTERN = '# You are not allowed to modify (?P<t>\w+) (?P<r>\w+).'
+UNAUTHORIZED = re.compile(UNAUTHORIZED_PATTERN)
 
 class RTCreated(Exception):
     def __init__(self, msg):
         m = CREATED.match(msg)
         self.id = '{0}/{1}'.format(m.group('t').lower(), m.group('r'))
+
+class RTNoMatch(Exception):
+    pass
 
 def _clear(section, lineno=0):
     return section[lineno].lstrip('# ').rstrip('.')
@@ -54,7 +59,7 @@ def check(section):
     >>> check(['No matching results.'])
     Traceback (most recent call last):
             ...
-    RTNotFoundError: No matching results
+    RTNoMatch: No matching results
     >>> check(['# Could not create ticket.', '# Could not create ticket. Queue not set'])
     Traceback (most recent call last):
             ...
@@ -64,6 +69,10 @@ def check(section):
     ... except RTCreated as e:
     ...     e.id
     'ticket/1'
+    >>> check(['# You are not allowed to modify ticket 2.'])
+    Traceback (most recent call last):
+            ...
+    RTUnauthorized: You are not allowed to modify ticket 2
     '''
     def _incheck(section, e):
         m = e[0].match(section[0])
@@ -78,8 +87,9 @@ PARSING_TABLE = (
     (INVALID, RTInvalidError, _clear, 0),
     (NOTFOUND, RTNotFoundError, _clear, 0),
     (NAMED_NOTFOUND, RTNotFoundError, _clear, 0),
-    (NO_MATCHING, RTNotFoundError, _clear, 0),
+    (NO_MATCHING, RTNoMatch, _clear, 0),
     (NAN, RTValueError, _clear, 0),
     (NOT_CREATED, RTInvalidError, _clear, 1),
     (CREATED, RTCreated, _pass, 0),
+    (UNAUTHORIZED, RTUnauthorized, _clear, 0)
 )
