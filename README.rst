@@ -82,28 +82,28 @@ Low Level Layer Examples
 ::
 
  #MISSING OR MISSPELLED QUEUE
-[DEBUG] POST ticket/new
-[DEBUG] {'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'text/plain', 'User-Agent': 'pyRTkit/0.0.1'}
-[DEBUG] u'content=Queue: \nText:  My useless\n text on\n three lines.\nSubject: New Ticket\n'
-[INFO] HTTP_STATUS: 200 OK
-[DEBUG] 'RT/3.8.10 200 Ok\n\n# Could not create ticket.\n# Could not create ticket. Queue not set\n\n'
-[INFO] RESOURCE_STATUS: 400 Could not create ticket. Queue not set
-[ERROR] 400
-[ERROR] 400 Could not create ticket. Queue not set
-[ERROR] []
+ [DEBUG] POST ticket/new
+ [DEBUG] {'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'text/plain', 'User-Agent': 'pyRTkit/0.0.1'}
+ [DEBUG] u'content=Queue: \nText:  My useless\n text on\n three lines.\nSubject: New Ticket\n'
+ [INFO] HTTP_STATUS: 200 OK
+ [DEBUG] 'RT/3.8.10 200 Ok\n\n# Could not create ticket.\n# Could not create ticket. Queue not set\n\n'
+ [INFO] RESOURCE_STATUS: 400 Could not create ticket. Queue not set
+ [ERROR] 400
+ [ERROR] 400 Could not create ticket. Queue not set
+ [ERROR] []
 
 ::
 
-#NO PERMISSION ON QUEUE
-[DEBUG] POST ticket/new
-[DEBUG] {'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'text/plain', 'User-Agent': 'pyRTkit/0.0.1'}
-[DEBUG] u'content=Queue: 2\nText:  My useless\n text on\n three lines.\nSubject: New Ticket\n'
-[INFO] HTTP_STATUS: 200 OK
-[DEBUG] "RT/3.8.10 200 Ok\n\n# Could not create ticket.\n# No permission to create tickets in the queue '___Approvals'\n\n"
-[INFO] RESOURCE_STATUS: 400 No permission to create tickets in the queue '___Approvals'
-[ERROR] 400
-[ERROR] 400 No permission to create tickets in the queue '___Approvals'
-[ERROR] []
+ #NO PERMISSION ON QUEUE
+ [DEBUG] POST ticket/new
+ [DEBUG] {'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'text/plain', 'User-Agent': 'pyRTkit/0.0.1'}
+ [DEBUG] u'content=Queue: 2\nText:  My useless\n text on\n three lines.\nSubject: New Ticket\n'
+ [INFO] HTTP_STATUS: 200 OK
+ [DEBUG] "RT/3.8.10 200 Ok\n\n# Could not create ticket.\n# No permission to create tickets in the queue '___Approvals'\n\n"
+ [INFO] RESOURCE_STATUS: 400 No permission to create tickets in the queue '___Approvals'
+ [ERROR] 400
+ [ERROR] 400 No permission to create tickets in the queue '___Approvals'
+ [ERROR] []
 
 References
 ================
