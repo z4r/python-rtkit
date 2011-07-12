@@ -1,32 +1,5 @@
 import re
-from restkit.errors import ResourceError as RTResourceError
-from restkit.errors import ResourceNotFound
-
-class RTUnknownTypeError(RTResourceError):
-    status_int = 400
-
-
-class RTInvalidError(RTResourceError):
-    status_int = 400
-
-
-class RTValueError(RTResourceError):
-    status_int = 400
-
-
-class RTCreated(Exception):
-    def __init__(self, msg):
-        m = CREATED.match('# '+msg+'.')
-        self.id = '{0}/{1}'.format(m.group('t').lower(), m.group('r'))
-
-
-__all__ = [
-    'RTUnknownTypeError',
-    'RTInvalidError',
-    'RTValueError',
-    'RTResourceError',
-    'ResourceNotFound',
-]
+from error import *
 
 UNKNOWN_PATTERN = '# Unknown object type: (?P<t>.+)'
 UNKNOWN = re.compile(UNKNOWN_PATTERN)
@@ -45,17 +18,16 @@ NO_MATCHING = re.compile(NO_MATCHING_PATTERN)
 CREATED_PATTERN = '# (?P<t>\w+) (?P<r>\d+) created.'
 CREATED = re.compile(CREATED_PATTERN)
 
-# compiled_pattern, error_class, match_line, msg_line
-PARSING_TABLE = (
-    (UNKNOWN, RTUnknownTypeError),
-    (INVALID, RTInvalidError),
-    (NOTFOUND, ResourceNotFound),
-    (NAMED_NOTFOUND, ResourceNotFound),
-    (NO_MATCHING, ResourceNotFound),
-    (NAN, RTValueError),
-    (NOT_CREATED, RTInvalidError),
-    (CREATED, RTCreated),
-)
+class RTCreated(Exception):
+    def __init__(self, msg):
+        m = CREATED.match(msg)
+        self.id = '{0}/{1}'.format(m.group('t').lower(), m.group('r'))
+
+def _clear(section, lineno=0):
+    return section[lineno].lstrip('# ').rstrip('.')
+
+def _pass(section, lineno=0):
+    return section[lineno]
 
 def check(section):
     '''Parse and Dispatch RT errors
@@ -70,19 +42,44 @@ def check(section):
     >>> check(['# spam 1 does not exist.'])
     Traceback (most recent call last):
             ...
-    ResourceNotFound: spam 1 does not exist
+    RTNotFoundError: spam 1 does not exist
     >>> check(['# No spam named ham exists.'])
     Traceback (most recent call last):
             ...
-    ResourceNotFound: No spam named ham exists
+    RTNotFoundError: No spam named ham exists
     >>> check(['# Objects of type eggs must be specified by numeric id.'])
     Traceback (most recent call last):
             ...
     RTValueError: Objects of type eggs must be specified by numeric id
+    >>> check(['No matching results.'])
+    Traceback (most recent call last):
+            ...
+    RTNotFoundError: No matching results
+    >>> check(['# Could not create ticket.', '# Could not create ticket. Queue not set'])
+    Traceback (most recent call last):
+            ...
+    RTInvalidError: Could not create ticket. Queue not set
+    >>> try:
+    ...     check(['# Ticket 1 created.'])
+    ... except RTCreated as e:
+    ...     e.id
+    'ticket/1'
     '''
-    def _incheck(line, e):
-        m = e[0].match(line)
+    def _incheck(section, e):
+        m = e[0].match(section[0])
         if m:
-            raise e[1](line.lstrip('# ').rstrip('.'))
+            raise e[1](e[2](section, e[3]))
     for e in PARSING_TABLE:
-        _incheck(section[0], e)
+        _incheck(section, e)
+
+# compiled_pattern, error_class, method, line_msg
+PARSING_TABLE = (
+    (UNKNOWN, RTUnknownTypeError, _clear, 0),
+    (INVALID, RTInvalidError, _clear, 0),
+    (NOTFOUND, RTNotFoundError, _clear, 0),
+    (NAMED_NOTFOUND, RTNotFoundError, _clear, 0),
+    (NO_MATCHING, RTNotFoundError, _clear, 0),
+    (NAN, RTValueError, _clear, 0),
+    (NOT_CREATED, RTInvalidError, _clear, 1),
+    (CREATED, RTCreated, _pass, 0),
+)

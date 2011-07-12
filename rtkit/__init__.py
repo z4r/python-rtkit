@@ -5,7 +5,7 @@ __version__ =  ".".join(map(str, version_info))
 
 try:
     from resource import RTResource
-    from errors import *
+    from error import *
 except ImportError:
     import traceback
     traceback.print_exc()
@@ -13,11 +13,11 @@ except ImportError:
 import logging
 
 LOG_LEVELS = {
-    "critical": logging.CRITICAL,
-    "error": logging.ERROR,
-    "warning": logging.WARNING,
-    "info": logging.INFO,
-    "debug": logging.DEBUG
+    'critical': logging.CRITICAL,
+    'error': logging.ERROR,
+    'warning': logging.WARNING,
+    'info': logging.INFO,
+    'debug': logging.DEBUG
 }
 
 def set_logging(level, handler=None):
@@ -27,8 +27,7 @@ def set_logging(level, handler=None):
     loglevel = LOG_LEVELS.get(level, logging.INFO)
     logger = logging.getLogger('rtkit')
     logger.setLevel(loglevel)
-    format = r"[%(asctime)s][%(levelname)s] %(message)s"
-    datefmt = r"%Y-%m-%d %H:%M:%S"
+    format = r'[%(levelname)s] %(message)s'
 
-    handler.setFormatter(logging.Formatter(format, datefmt))
+    handler.setFormatter(logging.Formatter(format))
     logger.addHandler(handler)

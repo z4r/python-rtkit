@@ -2,7 +2,8 @@ from itertools import ifilterfalse
 import logging
 import re
 from restkit import Resource, Response
-import errors
+from error import *
+import comment
 
 USER_AGENT = 'pyRTkit/{0}'.format('0.0.1')
 
@@ -66,7 +67,7 @@ class RTResponse(Response):
         self.logger.debug('%r'%body)
         try:
             self.parsed = self._parse(body)
-        except errors.RTResourceError as e:
+        except RTResourceError as e:
             self.parsed = []
             self.status_int = e.status_int
             self.status = '{0} {1}'.format(e.status_int, e.msg)
@@ -90,10 +91,10 @@ class RTResponse(Response):
         section = cls._build(body)
         if len(section) == 1:
             try:
-                errors.check(section[0])
-            except errors.ResourceNotFound:
+                comment.check(section[0])
+            except RTNotFoundError:
                 section = ''
-            except errors.RTCreated as e:
+            except comment.RTCreated as e:
                 section = [['id: {0}'.format(e.id)]]
         return [cls._decode(lines) for lines in section]
 

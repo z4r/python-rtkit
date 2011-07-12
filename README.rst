@@ -54,7 +54,7 @@ Low Level Layer Examples
  three lines.'''
      message = '\n'.join(' '+m for m in message.splitlines())
      content = {
-         'Queue': 1,
+         'Queue': 1,#'', 2
          'Subject' : 'New Ticket',
          'Text' : message,
      }
@@ -71,26 +71,39 @@ Low Level Layer Examples
 ::
 
  #OK
- [2011-07-11 16:51:42][DEBUG] POST ticket/new
- [2011-07-11 16:51:42][DEBUG] {'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'text/plain', 'User-Agent': 'pyRTkit/0.0.1'}
- [2011-07-11 16:51:42][DEBUG] u'content=Queue: 1\nText:  My useless\n text on\n three lines.\nSubject: New Ticket\n'
- [2011-07-11 16:51:42][INFO] HTTP_STATUS: 200 OK
- [2011-07-11 16:51:42][INFO] RESOURCE_STATUS: 200 Ok
- [2011-07-11 16:51:42][DEBUG] 'RT/3.8.10 200 Ok\n\n# Ticket 17 created.\n\n'
- [2011-07-11 16:51:42][INFO] [[('id', 'ticket/17')]]
+ [DEBUG] POST ticket/new
+ [DEBUG] {'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'text/plain', 'User-Agent': 'pyRTkit/0.0.1'}
+ [DEBUG] u'content=Queue: 1\nText:  My useless\n text on\n three lines.\nSubject: New Ticket\n'
+ [INFO] HTTP_STATUS: 200 OK
+ [DEBUG] 'RT/3.8.10 200 Ok\n\n# Ticket 17 created.\n\n'
+ [INFO] RESOURCE_STATUS: 200 Ok
+ [INFO] [[('id', 'ticket/17')]]
 
 ::
 
- #WRONG OR MISSING QUEUE
- [2011-07-11 17:22:39][DEBUG] POST ticket/new
- [2011-07-11 17:22:39][DEBUG] {'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'text/plain', 'User-Agent': 'pyRTkit/0.0.1'}
- [2011-07-11 17:22:39][DEBUG] u'content=Queue: \nText:  My useless\n text on\n three lines.\nSubject: New Ticket\n'
- [2011-07-11 17:22:39][INFO] HTTP_STATUS: 200 OK
- [2011-07-11 17:22:39][DEBUG] 'RT/3.8.10 200 Ok\n\n# Could not create ticket.\n# Could not create ticket. Queue not set\n\n'
- [2011-07-11 17:22:39][INFO] RESOURCE_STATUS: 400 Could not create ticket
- [2011-07-11 17:22:39][ERROR] 400
- [2011-07-11 17:22:39][ERROR] 400 Could not create ticket
- [2011-07-11 17:22:39][ERROR] []
+ #MISSING OR MISSPELLED QUEUE
+[DEBUG] POST ticket/new
+[DEBUG] {'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'text/plain', 'User-Agent': 'pyRTkit/0.0.1'}
+[DEBUG] u'content=Queue: \nText:  My useless\n text on\n three lines.\nSubject: New Ticket\n'
+[INFO] HTTP_STATUS: 200 OK
+[DEBUG] 'RT/3.8.10 200 Ok\n\n# Could not create ticket.\n# Could not create ticket. Queue not set\n\n'
+[INFO] RESOURCE_STATUS: 400 Could not create ticket. Queue not set
+[ERROR] 400
+[ERROR] 400 Could not create ticket. Queue not set
+[ERROR] []
+
+::
+
+#NO PERMISSION ON QUEUE
+[DEBUG] POST ticket/new
+[DEBUG] {'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'text/plain', 'User-Agent': 'pyRTkit/0.0.1'}
+[DEBUG] u'content=Queue: 2\nText:  My useless\n text on\n three lines.\nSubject: New Ticket\n'
+[INFO] HTTP_STATUS: 200 OK
+[DEBUG] "RT/3.8.10 200 Ok\n\n# Could not create ticket.\n# No permission to create tickets in the queue '___Approvals'\n\n"
+[INFO] RESOURCE_STATUS: 400 No permission to create tickets in the queue '___Approvals'
+[ERROR] 400
+[ERROR] 400 No permission to create tickets in the queue '___Approvals'
+[ERROR] []
 
 References
 ================
