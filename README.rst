@@ -31,37 +31,33 @@ More detailed version: `Request Tracker Wiki`_
 
 Low Level Layer Examples
 ================
-0) Connection using Basic Authentication
+Connection using Basic Authentication
+----------------
 
 ::
 
  from restkit.filters import BasicAuth
  from rtkit import RTResource, set_logging, RTResourceError
  import logging
- 
+
  set_logging('debug')
  logger = logging.getLogger('rtkit')
  auth = BasicAuth(<USER>, <PWD>)
  resource = RTResource('http://<HOST>/REST/1.0/',filters=[auth,])
 
-1) Create ticket
+Create ticket
+----------------
 
 ::
 
+ message = 'My useless\ntext on\nthree lines.'
+ content = {
+     'Queue': 1,#'', 2
+     'Subject' : 'New Ticket',
+     'Text' : message.replace('\n', '\n '),
+ }
  try:
-     message = '''My useless
- text on
- three lines.'''
-     message = '\n'.join(' '+m for m in message.splitlines())
-     content = {
-         'Queue': 1,#'', 2
-         'Subject' : 'New Ticket',
-         'Text' : message,
-     }
-     response = resource.post(
-         path='ticket/new',
-         payload=content,
-     )
+     response = resource.post(path='ticket/new', payload=content,)
      logger.info(response.parsed)
  except RTResourceError as e:
      logger.error(e.response.status_int)
@@ -73,7 +69,7 @@ Low Level Layer Examples
  #OK
  [DEBUG] POST ticket/new
  [DEBUG] {'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'text/plain', 'User-Agent': 'pyRTkit/0.0.1'}
- [DEBUG] u'content=Queue: 1\nText:  My useless\n text on\n three lines.\nSubject: New Ticket\n'
+ [DEBUG] u'content=Queue: 1\nText: My useless\n text on\n three lines.\nSubject: New Ticket\n'
  [INFO] HTTP_STATUS: 200 OK
  [DEBUG] 'RT/3.8.10 200 Ok\n\n# Ticket 17 created.\n\n'
  [INFO] RESOURCE_STATUS: 200 Ok
@@ -84,7 +80,7 @@ Low Level Layer Examples
  #MISSING OR MISSPELLED QUEUE
  [DEBUG] POST ticket/new
  [DEBUG] {'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'text/plain', 'User-Agent': 'pyRTkit/0.0.1'}
- [DEBUG] u'content=Queue: \nText:  My useless\n text on\n three lines.\nSubject: New Ticket\n'
+ [DEBUG] u'content=Queue: \nText: My useless\n text on\n three lines.\nSubject: New Ticket\n'
  [INFO] HTTP_STATUS: 200 OK
  [DEBUG] 'RT/3.8.10 200 Ok\n\n# Could not create ticket.\n# Could not create ticket. Queue not set\n\n'
  [INFO] RESOURCE_STATUS: 400 Could not create ticket. Queue not set
@@ -97,7 +93,7 @@ Low Level Layer Examples
  #NO PERMISSION ON QUEUE
  [DEBUG] POST ticket/new
  [DEBUG] {'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'text/plain', 'User-Agent': 'pyRTkit/0.0.1'}
- [DEBUG] u'content=Queue: 2\nText:  My useless\n text on\n three lines.\nSubject: New Ticket\n'
+ [DEBUG] u'content=Queue: 2\nText: My useless\n text on\n three lines.\nSubject: New Ticket\n'
  [INFO] HTTP_STATUS: 200 OK
  [DEBUG] "RT/3.8.10 200 Ok\n\n# Could not create ticket.\n# No permission to create tickets in the queue '___Approvals'\n\n"
  [INFO] RESOURCE_STATUS: 400 No permission to create tickets in the queue '___Approvals'
