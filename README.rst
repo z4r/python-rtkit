@@ -192,6 +192,33 @@ For now rtkit will raise Syntax Error with the errors list in e.response.parsed
  [ERROR] 409 Syntax Error
  [ERROR] [[('queue', 'You may not create requests in that queue.'), ('spam', 'Unknown field.')]]
 
+Comment on a Ticket with Attachments
+------------
+> Due to https://github.com/benoitc/restkit/issues/65 this feature doesn't work properly.
+> (Monkey: edit from restkit wrappers.py @ line 93 removing "self" from self.body.boundary)
+
+Normally will be something like this.
+
+::
+
+ try:
+     params = {
+         'content' :{
+             'Action' : 'comment',
+             'Text' : 'Comment with attach',
+             'Attachment' : 'x.txt, 140x105.jpg',
+         },
+         'attachment_1' : file('x.txt'),
+         'attachment_2' : file('140x105.jpg'),
+     }
+     response = resource.post(path='ticket/16/comment', payload=params,)
+     for r in response.parsed:
+         for t in r:
+             logger.info(t)
+ except RTResourceError as e:
+     logger.error(e.response.status_int)
+     logger.error(e.response.status)
+     logger.error(e.response.parsed)
 
 References
 ================

@@ -3,11 +3,11 @@ import logging
 import re
 from restkit import Resource, Response
 from error import *
+from forms import RTMultipartForm
 import comment
 
-USER_AGENT = 'pyRTkit/{0}'.format('0.0.1')
-
 class RTResource(Resource):
+    BOUNDARY = 'xXXxXXyYYzzz'
     def __init__(self, uri, **kwargs):
         kwargs['response_class'] = RTResponse
         super(RTResource, self).__init__(uri, **kwargs)
@@ -16,15 +16,10 @@ class RTResource(Resource):
     def request(self, method, path=None, payload=None, headers=None, **kwargs):
         headers = headers or dict()
         headers.setdefault('Accept', 'text/plain')
-        headers.setdefault('User-Agent', USER_AGENT)
-        if payload and not hasattr(payload, 'read') \
-            and not isinstance(payload, basestring):
-            payload = self.encode(payload)
-            headers.setdefault('Content-Type',
-                               'application/x-www-form-urlencoded')
+        payload = RTMultipartForm(payload, self.BOUNDARY, headers)
         self.logger.debug('{0} {1}'.format(method, path))
         self.logger.debug(headers)
-        self.logger.debug('%r'%payload)
+        self.logger.debug('%r' % payload)
         return super(RTResource, self).request(
             method,
             path=path,
@@ -32,16 +27,6 @@ class RTResource(Resource):
             headers=headers,
             **kwargs
         )
-
-    @staticmethod
-    def encode(payload):
-        r'''Encode a dictionary into a valid RT query string
-        >>> payload = {'spam': 1, 'ham':2, 'eggs':3, }
-        >>> RTResource.encode(payload)
-        u'content=eggs: 3\nham: 2\nspam: 1\n'
-        '''
-        pstr = ['{0}: {1}'.format(k,v) for k,v in payload.iteritems()]
-        return u'content={0}\n'.format('\n'.join(pstr))
 
 
 class RTResponse(Response):
