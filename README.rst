@@ -194,9 +194,9 @@ For now rtkit will raise Syntax Error with the errors list in e.response.parsed
 
 Comment on a Ticket with Attachments
 ------------
- > Due to https://github.com/benoitc/restkit/issues/65 this feature doesn't work properly.
+Due to https://github.com/benoitc/restkit/issues/65 this feature doesn't work properly.
 
- > (Monkey: edit from restkit wrappers.py @ line 93 removing "self" from self.body.boundary)
+ [Monkey: edit from restkit wrappers.py @ line 93 removing "self" from self.body.boundary]
 
 Normally will be something like this.
 
