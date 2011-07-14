@@ -229,4 +229,4 @@ References
 
 .. _Best Practical RT: http://bestpractical.com/rt/
 .. _Request Tracker Wiki: http://requesttracker.wikia.com/wiki/REST
-.. _restkit: http://restkit.org/
+.. _restkit: http://benoitc.github.com/restkit/
