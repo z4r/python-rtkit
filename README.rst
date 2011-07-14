@@ -198,7 +198,7 @@ Until https://github.com/benoitc/restkit/pull/66 this feature doesn't work prope
 
  [Monkey: Install my restkit fork: https://github.com/z4r/restkit]
 
-Normally will be something like this.
+Normally it will be something like this.
 
 ::
 

@@ -10,6 +10,11 @@ except ImportError:
     import traceback
     traceback.print_exc()
 
+import restkit
+if restkit.__version__.split('.') < (3,3,1):
+    import warnings
+    warnings.warn("Attachment features will raise AttributeError", FutureWarning)
+
 import logging
 
 LOG_LEVELS = {

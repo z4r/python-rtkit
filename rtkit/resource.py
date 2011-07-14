@@ -3,7 +3,7 @@ import logging
 import re
 from restkit import Resource, Response
 from error import *
-from forms import RTBoundaryItem
+from forms import RTBoundaryItem, single_encode
 from restkit.forms import MultipartForm
 import comment
 
@@ -17,7 +17,13 @@ class RTResource(Resource):
     def request(self, method, path=None, payload=None, headers=None, **kwargs):
         headers = headers or dict()
         headers.setdefault('Accept', 'text/plain')
-        payload = MultipartForm(payload, self.BOUNDARY, headers, RTBoundaryItem)
+        if len(payload) == 1 and payload.get('content'):
+            payload = 'content={0}'.format(single_encode(payload['content']))
+            headers.setdefault('Content-Type',
+                        'application/x-www-form-urlencoded; charset=utf-8')
+        else:
+            payload = MultipartForm(payload, self.BOUNDARY, headers,
+                                    bitem_cls=RTBoundaryItem)
         self.logger.debug('{0} {1}'.format(method, path))
         self.logger.debug(headers)
         self.logger.debug('%r' % payload)
