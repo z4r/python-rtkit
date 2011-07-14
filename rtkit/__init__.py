@@ -28,11 +28,12 @@ LOG_LEVELS = {
 def set_logging(level, handler=None):
     if not handler:
         handler = logging.StreamHandler()
-
-    loglevel = LOG_LEVELS.get(level, logging.INFO)
-    logger = logging.getLogger('rtkit')
-    logger.setLevel(loglevel)
     format = r'[%(levelname)s] %(message)s'
-
     handler.setFormatter(logging.Formatter(format))
-    logger.addHandler(handler)
+    loggers = [
+        logging.getLogger('rtkit'),
+        logging.getLogger('restkit'),
+    ]
+    for logger in loggers:
+        logger.setLevel(LOG_LEVELS.get(level, logging.INFO))
+        logger.addHandler(handler)

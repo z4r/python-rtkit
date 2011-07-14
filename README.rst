@@ -162,8 +162,8 @@ Read a ticket
 
 Edit a ticket or ticket's links
 ----------------
-Editing a ticket (or ticket's links) has not all-or-nothing behaviour; so it's very difficult capture errors.
-For example tring to change Queue to a not admitted one or editing an unknown field RT will return
+Ticket (or ticket's links) editing hasn't all-or-nothing behaviour; so it's very difficult to capture errors.
+For example trying to change Queue to a not admitted one (or to edit an unknown field) RT will return:
 
 ::
 
@@ -178,7 +178,7 @@ For example tring to change Queue to a not admitted one or editing an unknown fi
  Queue: 2
  Spam: 10
 
-For now rtkit will raise Syntax Error with the errors list in e.response.parsed
+For now rtkit will raise SyntaxError with the errors list in e.response.parsed
 
 ::
 
@@ -198,7 +198,7 @@ Until https://github.com/benoitc/restkit/pull/66 this feature doesn't work prope
 
  [Monkey: Install my restkit fork: https://github.com/z4r/restkit]
 
-Normally it will be something like this.
+Usually your requests will be something like this.
 
 ::
 
