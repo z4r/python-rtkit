@@ -2,7 +2,7 @@ from itertools import ifilterfalse
 import logging
 import re
 from restkit import Resource, Response
-from errors import *
+import errors
 import forms
 import comment
 
@@ -56,7 +56,7 @@ class RTResponse(Response):
             if self.status_int == 409:
                 decode = self._decode_comment
             self.parsed = self._parse(body, decode)
-        except RTResourceError as e:
+        except errors.RTResourceError as e:
             self.parsed = []
             self.status_int = e.status_int
             self.status = '{0} {1}'.format(e.status_int, e.msg)
