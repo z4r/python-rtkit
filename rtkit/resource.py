@@ -2,9 +2,8 @@ from itertools import ifilterfalse
 import logging
 import re
 from restkit import Resource, Response
-from error import *
-from forms import RTBoundaryItem, encode
-from restkit.forms import MultipartForm
+from errors import *
+import forms
 import comment
 
 class RTResource(Resource):
@@ -18,13 +17,7 @@ class RTResource(Resource):
         headers = headers or dict()
         headers.setdefault('Accept', 'text/plain')
         if payload:
-            if len(payload) == 1 and 'content' in payload:
-                payload = 'content={0}'.format(encode(payload['content']))
-                headers.setdefault('Content-Type',
-                            'application/x-www-form-urlencoded; charset=utf-8')
-            else:
-                payload = MultipartForm(payload, self.BOUNDARY, headers,
-                                        bitem_cls=RTBoundaryItem)
+            payload = forms.encode(payload, self.BOUNDARY, headers)
         self.logger.debug('{0} {1}'.format(method, path))
         self.logger.debug(headers)
         self.logger.debug('%r' % payload)

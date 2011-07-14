@@ -16,5 +16,3 @@ class User(RTEntity):
 
     def __str__(self):
         return '{s.id}: {s.rname} <{s.mail}>'.format(s=self)
-
-        

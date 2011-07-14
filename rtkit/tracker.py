@@ -1,6 +1,6 @@
 from restkit.filters import BasicAuth
 from resource import RTResource
-from entity import User
+from entities import User
 
 class Tracker(RTResource):
     def __init__(self, uri, username, password, language, logger):
