@@ -3,7 +3,8 @@ import logging
 import re
 from restkit import Resource, Response
 from error import *
-from forms import RTMultipartForm
+from forms import RTBoundaryItem
+from restkit.forms import MultipartForm
 import comment
 
 class RTResource(Resource):
@@ -16,7 +17,7 @@ class RTResource(Resource):
     def request(self, method, path=None, payload=None, headers=None, **kwargs):
         headers = headers or dict()
         headers.setdefault('Accept', 'text/plain')
-        payload = RTMultipartForm(payload, self.BOUNDARY, headers)
+        payload = MultipartForm(payload, self.BOUNDARY, headers, RTBoundaryItem)
         self.logger.debug('{0} {1}'.format(method, path))
         self.logger.debug(headers)
         self.logger.debug('%r' % payload)
