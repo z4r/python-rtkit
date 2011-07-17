@@ -1,19 +1,45 @@
-# -*- coding: utf-8 -
+__author__ = 'Andrea De Marco <24erre@gmail.com>'
+__version__ = '0.0.1'
+__classifiers__ = [
+    'Development Status :: 4 - Beta',
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: GNU General Public License (GPL)',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python',
+    'Topic :: Internet :: WWW/HTTP',
+    'Topic :: Software Development :: Libraries',
+]
+__all__ = [
+    'resource', 'errors', 'tracker',
+]
+__copyright__ = "2011, %s " % __author__
+__license__ = """
+   Copyright (C) %s
 
-version_info = (0, 0, 1)
-__version__ =  ".".join(map(str, version_info))
+      This program is free software: you can redistribute it and/or modify
+      it under the terms of the GNU General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      (at your option) any later version.
 
-try:
-    from resource import RTResource
-    from errors import *
-except ImportError:
-    import traceback
-    traceback.print_exc()
+      This program is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+      GNU General Public License for more details.
 
-import restkit
-if restkit.__version__.split('.') < (3,3,1):
-    import warnings
-    warnings.warn("Attachment features will raise AttributeError", FutureWarning)
+      You should have received a copy of the GNU General Public License
+      along with this program.  If not, see <http://www.gnu.org/licenses/>.
+""" % __copyright__
+
+__docformat__ = 'restructuredtext en'
+
+__doc__ = """
+:abstract: Python interface to Request Tracker REST API
+:version: %s
+:author: %s
+:contact: http://z4r.github.com/
+:date: 2011-07-15
+:copyright: %s
+""" % (__version__, __author__, __license__)
 
 import logging
 

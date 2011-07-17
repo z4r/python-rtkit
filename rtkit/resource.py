@@ -39,7 +39,8 @@ class RTResponse(Response):
     def __init__(self, connection, request, resp):
         super(RTResponse, self).__init__(connection, request, resp)
         self.logger = logging.getLogger('rtkit')
-        self.logger.info('HTTP_STATUS: {0}'.format(self.status))
+        self.logger.info('{r.method} {r.path}'.format(r=request))
+        self.logger.debug('HTTP_STATUS: {0}'.format(self.status))
         body = self._body.read()
         r = self.HEADER.match(body)
         if r:
@@ -60,7 +61,9 @@ class RTResponse(Response):
             self.parsed = []
             self.status_int = e.status_int
             self.status = '{0} {1}'.format(e.status_int, e.msg)
-        self.logger.info('RESOURCE_STATUS: {0}'.format(self.status))
+        self.logger.debug('RESOURCE_STATUS: {0}'.format(self.status))
+        self.logger.info(self.parsed)
+
 
     @classmethod
     def _parse(cls, body, decode):

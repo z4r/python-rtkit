@@ -1,23 +1,25 @@
 from restkit.filters import BasicAuth
-from resource import RTResource
-from entities import User
+from rtkit.resource import RTResource
+from entities import *
 
 class Tracker(RTResource):
-    def __init__(self, uri, username, password, language, logger):
-        self.logger = logger
+    def __init__(self, uri, username, password, language='en'):
         auth = BasicAuth(username,password)
         super(Tracker, self).__init__(uri, filters=[auth,])
         self.user = self.get_user(username)
-        self.logger.info('Logged As: {0}'.format(self.user))
         self.language = self.user.language or language
-        self.logger.info('Tracker language: {0}'.format(self.language))
 
-    def get_user(self, user):
-        init_user = self._get_entity('user', user)
-        return User(**dict(init_user))
+    def get_user(self, value):
+        return self._get_entity(User, value)
 
-    def _get_entity(self, type, id):
-        r = self.get(path='{0}/{1}'.format(type, id))
-        return r.parsed[0]
+    def get_queue(self, value):
+        return self._get_entity(Queue, value)
+
+    def get_ticket(self, value):
+        return self._get_entity(Ticket, value)
+
+    def _get_entity(self, Entity, value):
+        r = self.get(path='{0}/{1}'.format(Entity.api(), value))
+        return Entity(**dict(r.parsed[0]))
 
 
