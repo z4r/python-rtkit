@@ -31,19 +31,18 @@ More detailed version: `Request Tracker Wiki`_
 
 Low Level Layer: Examples and Tips
 ================
-Connection using Basic Authentication
+For Now Only Basic Authentication is supported
 ----------------
 
 ::
 
- from restkit.filters import BasicAuth
  from rtkit import RTResource, set_logging, RTResourceError
  import logging
 
  set_logging('debug')
  logger = logging.getLogger('rtkit')
- auth = BasicAuth(<USER>, <PWD>)
- resource = RTResource('http://<HOST>/REST/1.0/',filters=[auth,])
+
+ resource = RTResource('http://<HOST>/REST/1.0/', (<USER>, <PWD>))
 
 Create ticket
 ----------------
@@ -194,9 +193,6 @@ For now rtkit will raise SyntaxError with the errors list in e.response.parsed
 
 Comment on a Ticket with Attachments
 ------------
-Until https://github.com/benoitc/restkit/pull/66 this feature doesn't work properly.
-
- [Monkey: Install my restkit fork: https://github.com/z4r/restkit]
 
 Usually your requests will be something like this.
 
@@ -225,8 +221,6 @@ References
 ================
 * `Best Practical RT`_
 * `Request Tracker Wiki`_
-* restkit_
 
 .. _Best Practical RT: http://bestpractical.com/rt/
 .. _Request Tracker Wiki: http://requesttracker.wikia.com/wiki/REST
-.. _restkit: http://benoitc.github.com/restkit/

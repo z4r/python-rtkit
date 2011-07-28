@@ -12,6 +12,9 @@ __classifiers__ = [
 __all__ = [
     'resource', 'errors', 'tracker',
 ]
+
+import resource, errors
+
 __copyright__ = "2011, %s " % __author__
 __license__ = """
    Copyright (C) %s
@@ -58,7 +61,6 @@ def set_logging(level, handler=None):
     handler.setFormatter(logging.Formatter(format))
     loggers = [
         logging.getLogger('rtkit'),
-        logging.getLogger('restkit'),
     ]
     for logger in loggers:
         logger.setLevel(LOG_LEVELS.get(level, logging.INFO))

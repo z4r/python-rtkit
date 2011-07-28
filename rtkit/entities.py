@@ -1,6 +1,4 @@
-from datetime import timedelta
-
-__all__ = ['RTEntity', 'User', 'Queue', 'Ticket']
+__all__ = ['User', 'Queue', 'Ticket', 'Attachment', 'History', 'Links']
 
 class RTEntity(object):
     def __init__(self, id):
@@ -73,3 +71,30 @@ class Ticket(RTEntity):
     @staticmethod
     def api():
         return 'ticket'
+
+class Attachment(RTEntity):
+    def __init__(self, id, **kwargs):
+        super(Attachment, self).__init__(id)
+        self.filename = kwargs.get('Filename')
+        self.ctype = kwargs.get('ContentType')
+        self.encoding = kwargs.get('ContentEncoding')
+        self.content = kwargs.get('Content')
+
+    def __str__(self):
+        return '[{s.ticket}]{s.id}'.format(s=self)
+
+    @property
+    def id(self):
+        return int(self._id)
+
+    @staticmethod
+    def api():
+        return 'attachments'
+
+
+class History(RTEntity):
+    pass
+
+
+class Links(RTEntity):
+    pass

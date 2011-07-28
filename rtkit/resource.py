@@ -1,62 +1,75 @@
+from base64 import encodestring
 from itertools import ifilterfalse
 import logging
 import re
-from restkit import Resource, Response
 import errors
 import forms
 import comment
+from urllib2 import Request, urlopen, HTTPError
 
-class RTResource(Resource):
-    BOUNDARY = 'xXXxXXyYYzzz'
-    def __init__(self, uri, **kwargs):
-        kwargs['response_class'] = RTResponse
-        super(RTResource, self).__init__(uri, **kwargs)
+class RTResource(object):
+    def __init__(self, uri, auth, **kwargs):
+        self.uri = uri
+        self.response_cls = kwargs.get('response_class', RTResponse)
+        self.bauth_hder = "basic %s" % encodestring('%s:%s' % auth).strip()
         self.logger = logging.getLogger('rtkit')
 
-    def request(self, method, path=None, payload=None, headers=None, **kwargs):
+    def get(self, path=None, headers=None):
+        return self.request('GET', path, headers=headers)
+
+    def post(self, path=None, payload=None, headers=None):
+        return self.request('POST', path, payload, headers)
+
+    def request(self, method, path=None, payload=None, headers=None):
         headers = headers or dict()
+        headers['authorization'] = self.bauth_hder
         headers.setdefault('Accept', 'text/plain')
         if payload:
-            payload = forms.encode(payload, self.BOUNDARY, headers)
+            payload = forms.encode(payload, headers)
         self.logger.debug('{0} {1}'.format(method, path))
         self.logger.debug(headers)
         self.logger.debug('%r' % payload)
-        return super(RTResource, self).request(
-            method,
-            path=path,
-            payload=payload,
-            headers=headers,
-            **kwargs
+        req = Request(
+                self.uri+path,
+                payload,
+                headers,
         )
+        try:
+            response = urlopen(req)
+        except HTTPError as e:
+            response = e
+        return self.response_cls(req, response)
 
 
-class RTResponse(Response):
+class RTResponse(object):
     HEADER_PATTERN = '^RT/(?P<v>\d+\.\d+\.\d+)\s+(?P<s>(?P<i>\d+).+)'
     HEADER = re.compile(HEADER_PATTERN)
     COMMENT_PATTERN = '^#\s+.+$'
     COMMENT = re.compile(COMMENT_PATTERN)
 
-    def __init__(self, connection, request, resp):
-        super(RTResponse, self).__init__(connection, request, resp)
+    def __init__(self, request, response):
+        self.headers = response.headers
+        self.body = response.read()
+        self.status_int = response.code
+        self.status = '{0} {1}'.format(response.code, response.msg)
         self.logger = logging.getLogger('rtkit')
-        self.logger.info('{r.method} {r.path}'.format(r=request))
+        self.logger.info(request.get_method())
+        self.logger.info(request.get_full_url())
         self.logger.debug('HTTP_STATUS: {0}'.format(self.status))
-        body = self._body.read()
-        r = self.HEADER.match(body)
+        r = self.HEADER.match(self.body)
         if r:
-            self.version = tuple([int(v) for v in r.group('v').split('.')])
             self.status = r.group('s')
             self.status_int = int(r.group('i'))
         else:
-            self.logger.error('"{0}" is not valid'.format(body))
-            self.status = body
+            self.logger.error('"{0}" is not valid'.format(self.body))
+            self.status = self.body
             self.status_int = 500
-        self.logger.debug('%r'%body)
+        self.logger.debug('%r'%self.body)
         try:
-            decode = self._decode
+            decoder = self._decode
             if self.status_int == 409:
-                decode = self._decode_comment
-            self.parsed = self._parse(body, decode)
+                decoder = self._decode_comment
+            self.parsed = self._parse(self.body, decoder)
         except errors.RTResourceError as e:
             self.parsed = []
             self.status_int = e.status_int
@@ -66,7 +79,7 @@ class RTResponse(Response):
 
 
     @classmethod
-    def _parse(cls, body, decode):
+    def _parse(cls, body, decoder):
         r'''Return a list of RFC5322-like section
         >>> decode = RTResponse._decode
         >>> body = """
@@ -98,19 +111,23 @@ class RTResponse(Response):
                 section = ''
             except comment.RTCreated as e:
                 section = [['id: {0}'.format(e.id)]]
-        return [decode(lines) for lines in section]
+        return [decoder(lines) for lines in section]
 
     @classmethod
     def _decode(cls, lines):
         '''Return a list of 2-tuples parsing 'k: v' and skipping comments
         >>> RTResponse._decode(['# c1: c2', 'spam: 1', 'ham: 2, 3', 'eggs:'])
         [('spam', '1'), ('ham', '2, 3'), ('eggs', '')]
-        >>>
+        >>> RTResponse._decode(['<!DOCTYPE HTML PUBLIC >', '<html><head>',])
+        []
         '''
-        lines = ifilterfalse(cls.COMMENT.match, lines)
-        return [(k, v.strip(' '))
-            for k,v in [l.split(':', 1)
-                for l in lines]]
+        try:
+            lines = ifilterfalse(cls.COMMENT.match, lines)
+            return [(k, v.strip(' '))
+                for k,v in [l.split(':', 1)
+                    for l in lines]]
+        except ValueError:
+            return []
 
     @classmethod
     def _decode_comment(cls, lines):
