@@ -5,17 +5,6 @@ python-rtkit
 
 This is your survey example:
 
-```python
-#models.py
-from django.db import models
-from dymo.contrib import dymodels, registry
-
-class Survey(dymodels.AbstractSchema):
-    pass
-
-registry.register(schema = Survey)
-```
-
 Installation
 ================
 
