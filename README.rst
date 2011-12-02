@@ -30,10 +30,9 @@ More detailed version: `Request Tracker Wiki`_
  [15][R-] Search tickets                    | search/ticket?query=<query>&orderby=<sort-order>&format=<format>
 
 Low Level Layer: Examples and Tips
-================
-For Now Only Basic Authentication is supported
-----------------
-
+==================================
+For Now Only Basic Authentication is supported:
+-----------------------------------------------
 ```python
 from rtkit import RTResource, set_logging, RTResourceError
 import logging
