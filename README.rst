@@ -3,6 +3,18 @@ python-rtkit
 ====================
 `Best Practical RT`_ (Request Tracker) data access python module for REST interface.
 
+This is your survey example:
+
+```python
+#models.py
+from django.db import models
+from dymo.contrib import dymodels, registry
+
+class Survey(dymodels.AbstractSchema):
+    pass
+
+registry.register(schema = Survey)
+```
 
 Installation
 ================
@@ -31,17 +43,18 @@ More detailed version: `Request Tracker Wiki`_
 
 Low Level Layer: Examples and Tips
 ==================================
-For Now Only Basic Authentication is supported:
------------------------------------------------
-```python
-from rtkit import RTResource, set_logging, RTResourceError
-import logging
+For Now Only Basic Authentication is supported
+----------------------------------------------
 
-set_logging('debug')
-logger = logging.getLogger('rtkit')
+::
 
-resource = RTResource('http://<HOST>/REST/1.0/', (<USER>, <PWD>))
-```
+ from rtkit import RTResource, set_logging, RTResourceError
+ import logging
+
+ set_logging('debug')
+ logger = logging.getLogger('rtkit')
+
+ resource = RTResource('http://<HOST>/REST/1.0/', (<USER>, <PWD>))
 
 Create ticket
 ----------------
