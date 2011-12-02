@@ -34,8 +34,7 @@ Low Level Layer: Examples and Tips
 For Now Only Basic Authentication is supported
 ----------------
 
-::
-
+```python
  from rtkit import RTResource, set_logging, RTResourceError
  import logging
 
@@ -43,6 +42,7 @@ For Now Only Basic Authentication is supported
  logger = logging.getLogger('rtkit')
 
  resource = RTResource('http://<HOST>/REST/1.0/', (<USER>, <PWD>))
+```
 
 Create ticket
 ----------------
