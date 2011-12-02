@@ -35,13 +35,13 @@ For Now Only Basic Authentication is supported
 ----------------
 
 ```python
- from rtkit import RTResource, set_logging, RTResourceError
- import logging
+from rtkit import RTResource, set_logging, RTResourceError
+import logging
 
- set_logging('debug')
- logger = logging.getLogger('rtkit')
+set_logging('debug')
+logger = logging.getLogger('rtkit')
 
- resource = RTResource('http://<HOST>/REST/1.0/', (<USER>, <PWD>))
+resource = RTResource('http://<HOST>/REST/1.0/', (<USER>, <PWD>))
 ```
 
 Create ticket
