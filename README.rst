@@ -32,8 +32,9 @@ More detailed version: `Request Tracker Wiki`_
 
 Low Level Layer: Examples and Tips
 ==================================
-For Now Only Basic Authentication is supported
-----------------------------------------------
+
+For Basic Authentication
+------------------------
 
 ::
 
@@ -44,6 +45,13 @@ For Now Only Basic Authentication is supported
  logger = logging.getLogger('rtkit')
 
  resource = RTResource('http://<HOST>/REST/1.0/', (<USER>, <PWD>))
+
+For Cookie-based Authentication
+-------------------------------
+
+::
+
+ resource = RTResource('http://<HOST>/REST/1.0/', (<USER>, <PWD>), auth_type='cookie')
 
 Create ticket
 ----------------
