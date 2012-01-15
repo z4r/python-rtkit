@@ -72,6 +72,8 @@ class RTResponse(object):
     HEADER = re.compile(HEADER_PATTERN)
     COMMENT_PATTERN = '^#\s+.+$'
     COMMENT = re.compile(COMMENT_PATTERN)
+    SECTION_PATTERN = '^--'
+    SECTION = re.compile(SECTION_PATTERN, re.M|re.U)
 
     def __init__(self, request, response):
         self.headers = response.headers
@@ -106,15 +108,15 @@ class RTResponse(object):
 
     @classmethod
     def _parse(cls, body, decoder):
-        r'''Return a list of RFC5322-like section
+        r""" Return a list of RFC5322-like section
         >>> decode = RTResponse._decode
-        >>> body = """
+        >>> body = '''
         ...
         ... # c1
         ... spam: 1
         ... ham: 2,
         ...     3
-        ... eggs:"""
+        ... eggs:'''
         >>> RTResponse._parse(body, decode)
         [[('spam', '1'), ('ham', '2, 3'), ('eggs', '')]]
         >>> RTResponse._parse('# spam 1 does not exist.', decode)
@@ -128,7 +130,7 @@ class RTResponse(object):
         >>> decode = RTResponse._decode_comment
         >>> RTResponse._parse('# spam: 1\n# ham: 2', decode)
         [[('spam', '1'), ('ham', '2')]]
-        '''
+        """
         section = cls._build(body)
         if len(section) == 1:
             try:
@@ -141,12 +143,12 @@ class RTResponse(object):
 
     @classmethod
     def _decode(cls, lines):
-        '''Return a list of 2-tuples parsing 'k: v' and skipping comments
+        """ Return a list of 2-tuples parsing 'k: v' and skipping comments
         >>> RTResponse._decode(['# c1: c2', 'spam: 1', 'ham: 2, 3', 'eggs:'])
         [('spam', '1'), ('ham', '2, 3'), ('eggs', '')]
         >>> RTResponse._decode(['<!DOCTYPE HTML PUBLIC >', '<html><head>',])
         []
-        '''
+        """
         try:
             lines = ifilterfalse(cls.COMMENT.match, lines)
             return [(k, v.strip(' '))
@@ -157,11 +159,11 @@ class RTResponse(object):
 
     @classmethod
     def _decode_comment(cls, lines):
-        '''Return a list of 2-tuples parsing '# k: v'
+        """ Return a list of 2-tuples parsing '# k: v'
         >>> RTResponse._decode_comment(['# c1: c2', 'spam: 1', 'ham: 2, 3', 'eggs:'])
         [('c1', 'c2')]
         >>>
-        '''
+        """
         lines = filter(cls.COMMENT.match, lines)
         return [(k.strip('# '), v.strip(' '))
             for k,v in [l.split(':', 1)
@@ -169,23 +171,25 @@ class RTResponse(object):
 
     @classmethod
     def _build(cls, body):
-        '''Build logical lines from a RFC5322-like string
-        >>> body = """RT/1.2.3 200 Ok
+        """ Build logical lines from a RFC5322-like string
+        >>> body = '''RT/1.2.3 200 Ok
         ...
         ... # a
         ...   b
         ... spam: 1
-        ... 
+        ...
         ... ham: 2,
         ...     3
         ... --
         ... # c
         ... spam: 4
         ... ham:
-        ... """
+        ... --
+        ... a -- b
+        ... '''
         >>> RTResponse._build(body)
-        [['# a b', 'spam: 1', 'ham: 2, 3'], ['# c', 'spam: 4', 'ham:']]
-        '''
+        [['# a b', 'spam: 1', 'ham: 2, 3'], ['# c', 'spam: 4', 'ham:'], ['a -- b']]
+        """
         def build_section(section):
             logic_lines = []
             for line in filter(None, section.splitlines()):
@@ -196,4 +200,4 @@ class RTResponse(object):
                 else:
                    logic_lines.append(line)
             return logic_lines
-        return [build_section(b) for b in body.split('--')]
+        return [build_section(b) for b in cls.SECTION.split(body)]
