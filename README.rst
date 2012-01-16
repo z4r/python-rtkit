@@ -39,19 +39,28 @@ For Basic Authentication
 ::
 
  from rtkit import RTResource, set_logging, RTResourceError
+ from rtkit.authenticators import BasicAuthenticator
  import logging
 
  set_logging('debug')
  logger = logging.getLogger('rtkit')
-
- resource = RTResource('http://<HOST>/REST/1.0/', (<USER>, <PWD>))
+ auth = BasicAuthenticator(<USER>, <PWD>)
+ resource = RTResource('http://<HOST>/REST/1.0/', auth)
 
 For Cookie-based Authentication
 -------------------------------
 
 ::
 
- resource = RTResource('http://<HOST>/REST/1.0/', (<USER>, <PWD>), auth_type='cookie')
+ from rtkit import RTResource, set_logging, RTResourceError
+ from rtkit.authenticators import CookieAuthenticator
+ import logging
+
+ set_logging('debug')
+ logger = logging.getLogger('rtkit')
+
+ auth = CookieAuthenticator(<USER>, <PWD>)
+ resource = RTResource('http://<HOST>/REST/1.0/', auth)
 
 Create ticket
 ----------------
@@ -118,7 +127,8 @@ Read a ticket
      response = resource.get(path='ticket/1')
      for r in response.parsed:
          for t in r:
-             logger.info(t) except RTResourceError as e:
+             logger.info(t)
+ except RTResourceError as e:
      logger.error(e.response.status_int)
      logger.error(e.response.status)
      logger.error(e.response.parsed)

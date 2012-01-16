@@ -1,4 +1,3 @@
-from base64 import encodestring
 from itertools import ifilterfalse
 import logging
 import re
@@ -6,37 +5,14 @@ import errors
 import forms
 import comment
 from urllib2 import Request, HTTPError
-import cookielib
-import urllib
-import urllib2
 
 
 class RTResource(object):
-    def __init__(self, uri, auth, auth_type='basic', **kwargs):
+    def __init__(self, uri, auth, **kwargs):
         self.uri = uri
         self.response_cls = kwargs.get('response_class', RTResponse)
-        if auth_type == 'basic':
-            self.bauth_hder = "basic %s" % encodestring('%s:%s' % auth).strip()
-            self.opener = urllib2.build_opener()
-            self._logged_in = True
-        elif auth_type == 'cookie':
-            self.bauth_hder = None
-            self.auth = auth
-            cj = cookielib.LWPCookieJar()
-            self.opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-            self._logged_in = False
-        else:
-            raise NotImplementedError('Invalid auth_type')
+        self.auth = auth
         self.logger = logging.getLogger('rtkit')
-
-    def _login(self):
-        if self._logged_in:
-           return
-        data = {'user': self.auth[0], 'pass': self.auth[1]}
-        login_data = urllib.urlencode(data)
-        login_request = urllib2.Request(self.uri, login_data)
-        response = self.opener.open(login_request)
-        self._logged_in = True
 
     def get(self, path=None, headers=None):
         return self.request('GET', path, headers=headers)
@@ -45,10 +21,8 @@ class RTResource(object):
         return self.request('POST', path, payload, headers)
 
     def request(self, method, path=None, payload=None, headers=None):
-        self._login()
+        self.auth.login(self.uri)
         headers = headers or dict()
-        if self.bauth_hder:
-            headers['authorization'] = self.bauth_hder
         headers.setdefault('Accept', 'text/plain')
         if payload:
             payload = forms.encode(payload, headers)
@@ -61,7 +35,7 @@ class RTResource(object):
                 headers,
         )
         try:
-            response = self.opener.open(req)
+            response = self.auth.open(req)
         except HTTPError as e:
             response = e
         return self.response_cls(req, response)
