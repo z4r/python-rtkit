@@ -17,8 +17,8 @@ Using pip::
 
 .. _summary:
 
-Summary
-=======
+RT REST API Summary
+===================
 More detailed version: `Request Tracker Wiki`_
 
 +----+----+--------------------------------+--------------------------------------------------------+
@@ -55,21 +55,24 @@ More detailed version: `Request Tracker Wiki`_
 
 .. _overview:
 
-Overview
-========
+Overview on Low Level API
+=========================
 
 Basic Authentication
 --------------------
 
 ::
 
- from rtkit import RTResource, set_logging, RTResourceError
+ from rtkit.resource import RTResource
  from rtkit.authenticators import BasicAuthenticator
- import logging
+ from rtkit.errors import RTResourceError
 
+ from rtkit import set_logging
+ import logging
  set_logging('debug')
  logger = logging.getLogger('rtkit')
- auth = BasicAuthenticator(<USER>, <PWD>)
+
+ auth = BasicAuthenticator('<USER>', '<PWD>')
  resource = RTResource('http://<HOST>/REST/1.0/', auth)
 
 Cookie-based Authentication
@@ -77,14 +80,16 @@ Cookie-based Authentication
 
 ::
 
- from rtkit import RTResource, set_logging, RTResourceError
+ from rtkit.resource import RTResource
  from rtkit.authenticators import CookieAuthenticator
- import logging
+ from rtkit.errors import RTResourceError
 
+ from rtkit import set_logging
+ import logging
  set_logging('debug')
  logger = logging.getLogger('rtkit')
 
- auth = CookieAuthenticator(<USER>, <PWD>)
+ auth = CookieAuthenticator('<USER>', '<PWD>')
  resource = RTResource('http://<HOST>/REST/1.0/', auth)
 
 Create ticket
