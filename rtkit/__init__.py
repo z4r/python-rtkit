@@ -1,20 +1,14 @@
 __author__ = 'Andrea De Marco <24erre@gmail.com>'
-__version__ = '0.0.2'
+__version__ = '0.1.0'
 __classifiers__ = [
     'Development Status :: 4 - Beta',
     'Intended Audience :: Developers',
-    'License :: OSI Approved :: GNU General Public License (GPL)',
+    'License :: OSI Approved :: Apache Software License',
     'Operating System :: OS Independent',
     'Programming Language :: Python',
     'Topic :: Internet :: WWW/HTTP',
     'Topic :: Software Development :: Libraries',
 ]
-__all__ = [
-    'resource', 'errors', 'tracker',
-]
-
-import resource, errors
-
 __copyright__ = "2011, %s " % __author__
 __license__ = """
    Copyright (C) %s

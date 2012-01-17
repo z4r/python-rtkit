@@ -8,6 +8,7 @@ dist/
 *.egg
 *.egg/
 doc/__build/*
+docs/_build/
 build/
 .build/
 pip-log.txt
@@ -18,3 +19,6 @@ Documentation/
 .tox/
 .ropeproject/
 .idea/
+*.sh
+doc/build
+.buildinfo

@@ -1,40 +1,65 @@
-====================
-python-rtkit
-====================
+==============================
+Request Tracker REST Interface
+==============================
+
 `Best Practical RT`_ (Request Tracker) data access python module for REST interface.
 
-This is your survey example:
+.. contents::
+    :local:
+
+.. _installation:
 
 Installation
-================
+============
+Using pip::
 
-Rest Api Summary
-================
+    $ pip install git+https://github.com/z4r/python-rtkit
+
+.. _summary:
+
+Summary
+=======
 More detailed version: `Request Tracker Wiki`_
 
-::
++----+----+--------------------------------+--------------------------------------------------------+
+| 01 |  W | Create ticket                  | ticket/new                                             |
++----+----+--------------------------------+--------------------------------------------------------+
+| 02 | RW | Read/Update ticket             | ticket/<ticket-id>                                     |
++----+----+--------------------------------+--------------------------------------------------------+
+| 03 |  W | Create ticket comment          | ticket/<ticket-id>/comment                             |
++----+----+--------------------------------+--------------------------------------------------------+
+| 04 | RW | Read/Update ticket links       | ticket/<ticket-id>/links                               |
++----+----+--------------------------------+--------------------------------------------------------+
+| 05 | R  | Read ticket attachments        | ticket/<ticket-id>/attachments                         |
++----+----+--------------------------------+--------------------------------------------------------+
+| 06 | R  | Read ticket attachment         | ticket/<ticket-id>/attachments/<attachment-id>         |
++----+----+--------------------------------+--------------------------------------------------------+
+| 07 | R  | Read ticket attachment content | ticket/<ticket-id>/attachments/<attachment-id>/content |
++----+----+--------------------------------+--------------------------------------------------------+
+| 08 | R  | Read ticket history            | ticket/<ticket-id>/history                             |
++----+----+--------------------------------+--------------------------------------------------------+
+| 09 | R  | Read detailed ticket history   | ticket/<ticket-id>/history?format=l                    |
++----+----+--------------------------------+--------------------------------------------------------+
+| 10 | R  | Read ticket history item       | ticket/<ticket-id>/history/id/<history-id>             |
++----+----+--------------------------------+--------------------------------------------------------+
+| 11 | R  | Read user by id                | user/<user-id>                                         |
++----+----+--------------------------------+--------------------------------------------------------+
+| 12 | R  | Read user by name              | user/<user-Name>                                       |
++----+----+--------------------------------+--------------------------------------------------------+
+| 13 | R  | Read queue by id               | queue/<queue-id>                                       |
++----+----+--------------------------------+--------------------------------------------------------+
+| 14 | R  | Read queue by name             | queue/<queue-Name>                                     |
++----+----+--------------------------------+--------------------------------------------------------+
+| 15 | R  | Search tickets                 | search/ticket?query=<q>&orderby=<o>&format=<f>         |
++----+----+--------------------------------+--------------------------------------------------------+
 
- [01][-W] Create ticket                     | ticket/new
- [02][RW] Read/Update ticket                | ticket/<ticket-id>
- [03][-W] Create ticket comment             | ticket/<ticket-id>/comment
- [04][RW] Read/Update ticket links          | ticket/<ticket-id>/links
- [05][R-] Read ticket attachments           | ticket/<ticket-id>/attachments
- [06][R-] Read ticket attachment            | ticket/<ticket-id>/attachments/<attachment-id>
- [07][R-] Read ticket attachment content    | ticket/<ticket-id>/attachments/<attachment-id>/content
- [08][R-] Read ticket history               | ticket/<ticket-id>/history
- [09][R-] Read detailed ticket history      | ticket/<ticket-id>/history?format=l
- [10][R-] Read ticket history item          | ticket/<ticket-id>/history/id/<history-id>
- [11][R-] Read user by id                   | user/<user-id>
- [12][R-] Read user by name                 | user/<user-Name>
- [13][R-] Read queue by id                  | queue/<queue-id>
- [14][R-] Read queue by name                | queue/<queue-Name>
- [15][R-] Search tickets                    | search/ticket?query=<query>&orderby=<sort-order>&format=<format>
+.. _overview:
 
-Low Level Layer: Examples and Tips
-==================================
+Overview
+========
 
-For Basic Authentication
-------------------------
+Basic Authentication
+--------------------
 
 ::
 
@@ -47,8 +72,8 @@ For Basic Authentication
  auth = BasicAuthenticator(<USER>, <PWD>)
  resource = RTResource('http://<HOST>/REST/1.0/', auth)
 
-For Cookie-based Authentication
--------------------------------
+Cookie-based Authentication
+---------------------------
 
 ::
 
@@ -63,7 +88,7 @@ For Cookie-based Authentication
  resource = RTResource('http://<HOST>/REST/1.0/', auth)
 
 Create ticket
-----------------
+-------------
 
 ::
 
@@ -119,7 +144,7 @@ Create ticket
  [ERROR] []
 
 Read a ticket
-----------------
+-------------
 
 ::
 
@@ -179,7 +204,7 @@ Read a ticket
  [ERROR] []
 
 Edit a ticket or ticket's links
-----------------
+-------------------------------
 Ticket (or ticket's links) editing hasn't all-or-nothing behaviour; so it's very difficult to capture errors.
 For example trying to change Queue to a not admitted one (or to edit an unknown field) RT will return:
 
@@ -211,7 +236,7 @@ For now rtkit will raise SyntaxError with the errors list in e.response.parsed
  [ERROR] [[('queue', 'You may not create requests in that queue.'), ('spam', 'Unknown field.')]]
 
 Comment on a Ticket with Attachments
-------------
+------------------------------------
 
 Usually your requests will be something like this.
 
@@ -236,8 +261,18 @@ Usually your requests will be something like this.
      logger.error(e.response.status)
      logger.error(e.response.parsed)
 
+.. _license:
+
+License
+=======
+
+This software is licensed under the `Apache License 2.0`. See the ``LICENSE``
+file in the top distribution directory for the full license text.
+
+.. _references:
+
 References
-================
+==========
 * `Best Practical RT`_
 * `Request Tracker Wiki`_
 
