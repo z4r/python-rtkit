@@ -35,7 +35,7 @@ def _pass(section, lineno=0):
     return section[lineno]
 
 def check(section):
-    '''Parse and Dispatch RT errors
+    """Parse and Dispatch RT errors
     >>> check(['# Unknown object type: spam'])
     Traceback (most recent call last):
             ...
@@ -73,7 +73,7 @@ def check(section):
     Traceback (most recent call last):
             ...
     RTUnauthorized: You are not allowed to modify ticket 2
-    '''
+    """
     def _incheck(section, e):
         m = e[0].match(section[0])
         if m:

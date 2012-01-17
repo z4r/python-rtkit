@@ -103,7 +103,7 @@ class BoundaryItem(object):
         return self._encoded_hdr
 
     def encode(self, boundary):
-        """Returns the string encoding of this parameter"""
+        """ Returns the string encoding of this parameter. """
         value = self.value
         if re.search("^--%s$" % re.escape(boundary), value, re.M):
             raise ValueError("boundary found in encoded string")

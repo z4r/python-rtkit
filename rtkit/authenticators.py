@@ -1,10 +1,11 @@
-import cookielib
 import urllib
 import urllib2
-from base64 import encodestring
+import cookielib
+import base64
 
+__all__ = ['BasicAuthenticator', 'CookieAuthenticator',]
 
-class AnonAuthenticator(object):
+class AbstractAuthenticator(object):
     def __init__(self, username, password, *handlers):
         self.opener = urllib2.build_opener(*handlers)
         self.username = username
@@ -17,10 +18,10 @@ class AnonAuthenticator(object):
         return self.opener.open(request)
 
 
-class BasicAuthenticator(AnonAuthenticator):
+class BasicAuthenticator(AbstractAuthenticator):
     def __init__(self, username, password):
         super(BasicAuthenticator, self).__init__(username, password)
-        encoded_auth = encodestring('%s:%s' % (username, password))
+        encoded_auth = base64.encodestring('%s:%s' % (username, password))
         self.auth_header = {
             'authorization' : "basic %s" % encoded_auth.strip()
         }
@@ -30,7 +31,7 @@ class BasicAuthenticator(AnonAuthenticator):
         return super(BasicAuthenticator, self).open(request)
 
 
-class CookieAuthenticator(AnonAuthenticator):
+class CookieAuthenticator(AbstractAuthenticator):
     def __init__(self, username, password):
         super(CookieAuthenticator, self).__init__(
             username, password,
@@ -46,10 +47,3 @@ class CookieAuthenticator(AnonAuthenticator):
             urllib2.Request(uri, urllib.urlencode(data))
         )
         self._login = True
-
-
-
-
-
-
-
