@@ -266,7 +266,7 @@ Usually your requests will be something like this.
 License
 =======
 
-This software is licensed under the `Apache License 2.0`. See the ``LICENSE``
+This software is licensed under the ``Apache License 2.0``. See the ``LICENSE``
 file in the top distribution directory for the full license text.
 
 .. _references:

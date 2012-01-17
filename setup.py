@@ -6,7 +6,7 @@ wd = os.path.dirname(os.path.abspath(__file__))
 os.chdir(wd)
 sys.path.insert(1, wd)
 
-name = 'python-rtkit'
+name = 'rtkit'
 pkg = __import__(name)
 
 author, email = pkg.__author__.rsplit(' ', 1)
