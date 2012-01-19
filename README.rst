@@ -63,54 +63,55 @@ Basic Authentication
 
 ::
 
- from rtkit.resource import RTResource
- from rtkit.authenticators import BasicAuthenticator
- from rtkit.errors import RTResourceError
+    from rtkit.resource import RTResource
+    from rtkit.authenticators import BasicAuthenticator
+    from rtkit.errors import RTResourceError
 
- from rtkit import set_logging
- import logging
- set_logging('debug')
- logger = logging.getLogger('rtkit')
+    from rtkit import set_logging
+    import logging
+    set_logging('debug')
+    logger = logging.getLogger('rtkit')
 
- auth = BasicAuthenticator('<USER>', '<PWD>')
- resource = RTResource('http://<HOST>/REST/1.0/', auth)
+    auth = BasicAuthenticator('<USER>', '<PWD>')
+    resource = RTResource('http://<HOST>/REST/1.0/', auth)
 
 Cookie-based Authentication
 ---------------------------
 
 ::
 
- from rtkit.resource import RTResource
- from rtkit.authenticators import CookieAuthenticator
- from rtkit.errors import RTResourceError
+    from rtkit.resource import RTResource
+    from rtkit.authenticators import CookieAuthenticator
+    from rtkit.errors import RTResourceError
 
- from rtkit import set_logging
- import logging
- set_logging('debug')
- logger = logging.getLogger('rtkit')
+    from rtkit import set_logging
+    import logging
+    set_logging('debug')
+    logger = logging.getLogger('rtkit')
 
- auth = CookieAuthenticator('<USER>', '<PWD>')
- resource = RTResource('http://<HOST>/REST/1.0/', auth)
+    auth = CookieAuthenticator('<USER>', '<PWD>')
+    resource = RTResource('http://<HOST>/REST/1.0/', auth)
 
 Create ticket
 -------------
 
 ::
 
- message = 'My useless\ntext on\nthree lines.'
- content = {'content': {
-						 'Queue': 1,#'', 2
-						 'Subject' : 'New Ticket',
-						 'Text' : message.replace('\n', '\n '),
-						}
-			}
- try:
-     response = resource.post(path='ticket/new', payload=content,)
-     logger.info(response.parsed)
- except RTResourceError as e:
-     logger.error(e.response.status_int)
-     logger.error(e.response.status)
-     logger.error(e.response.parsed)
+    message = 'My useless\ntext on\nthree lines.'
+    content = {
+        'content': {
+            'Queue': 1,#'', 2
+            'Subject' : 'New Ticket',
+            'Text' : message.replace('\n', '\n '),
+        }
+    }
+    try:
+        response = resource.post(path='ticket/new', payload=content,)
+        logger.info(response.parsed)
+    except RTResourceError as e:
+        logger.error(e.response.status_int)
+        logger.error(e.response.status)
+        logger.error(e.response.parsed)
 
 ::
 
@@ -154,15 +155,15 @@ Read a ticket
 
 ::
 
- try:
-     response = resource.get(path='ticket/1')
-     for r in response.parsed:
-         for t in r:
-             logger.info(t)
- except RTResourceError as e:
-     logger.error(e.response.status_int)
-     logger.error(e.response.status)
-     logger.error(e.response.parsed)
+    try:
+        response = resource.get(path='ticket/1')
+        for r in response.parsed:
+            for t in r:
+                logger.info(t)
+    except RTResourceError as e:
+        logger.error(e.response.status_int)
+        logger.error(e.response.status)
+        logger.error(e.response.parsed)
 
 ::
 
@@ -248,24 +249,24 @@ Usually your requests will be something like this.
 
 ::
 
- try:
-     params = {
-         'content' :{
-             'Action' : 'comment',
-             'Text' : 'Comment with attach',
-             'Attachment' : 'x.txt, 140x105.jpg',
-         },
-         'attachment_1' : file('x.txt'),
-         'attachment_2' : file('140x105.jpg'),
-     }
-     response = resource.post(path='ticket/16/comment', payload=params,)
-     for r in response.parsed:
-         for t in r:
-             logger.info(t)
- except RTResourceError as e:
-     logger.error(e.response.status_int)
-     logger.error(e.response.status)
-     logger.error(e.response.parsed)
+    try:
+        params = {
+            'content' :{
+                'Action' : 'comment',
+                'Text' : 'Comment with attach',
+                'Attachment' : 'x.txt, 140x105.jpg',
+            },
+            'attachment_1' : file('x.txt'),
+            'attachment_2' : file('140x105.jpg'),
+        }
+        response = resource.post(path='ticket/16/comment', payload=params,)
+        for r in response.parsed:
+            for t in r:
+                logger.info(t)
+    except RTResourceError as e:
+        logger.error(e.response.status_int)
+        logger.error(e.response.status)
+        logger.error(e.response.parsed)
 
 .. _license:
 
