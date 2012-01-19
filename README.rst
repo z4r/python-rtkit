@@ -98,11 +98,12 @@ Create ticket
 ::
 
  message = 'My useless\ntext on\nthree lines.'
- content = {
-     'Queue': 1,#'', 2
-     'Subject' : 'New Ticket',
-     'Text' : message.replace('\n', '\n '),
- }
+ content = {'content': {
+						 'Queue': 1,#'', 2
+						 'Subject' : 'New Ticket',
+						 'Text' : message.replace('\n', '\n '),
+						}
+			}
  try:
      response = resource.post(path='ticket/new', payload=content,)
      logger.info(response.parsed)
