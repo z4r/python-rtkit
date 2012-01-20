@@ -2,8 +2,8 @@ from rtkit.resource import RTResource
 from entities import *
 
 class Tracker(RTResource):
-    def __init__(self, uri, auth, language='en'):
-        super(Tracker, self).__init__(uri, auth)
+    def __init__(self, url, username, password, auth, language='en'):
+        super(Tracker, self).__init__(url, username, password, auth)
         self.user = self.get_user(auth.username)
         self.language = self.user.language or language
 

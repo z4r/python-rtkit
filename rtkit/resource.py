@@ -8,9 +8,8 @@ from urllib2 import Request, HTTPError
 
 
 class RTResource(object):
-    def __init__(self, uri, auth, **kwargs):
-        self.uri            = uri
-        self.auth           = auth
+    def __init__(self, url, username, password, auth, **kwargs):
+        self.auth           = auth(username, password, url)
         self.response_cls   = kwargs.get('response_class', RTResponse)
         self.logger         = logging.getLogger('rtkit')
 
@@ -29,7 +28,7 @@ class RTResource(object):
         self.logger.debug(headers)
         self.logger.debug('%r' % payload)
         req = Request(
-            url     = self.uri+path,
+            url     = self.auth.url+path,
             data    = payload,
             headers = headers,
         )
