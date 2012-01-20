@@ -9,10 +9,10 @@ from urllib2 import Request, HTTPError
 
 class RTResource(object):
     def __init__(self, uri, auth, **kwargs):
-        self.uri = uri
-        self.response_cls = kwargs.get('response_class', RTResponse)
-        self.auth = auth
-        self.logger = logging.getLogger('rtkit')
+        self.uri            = uri
+        self.auth           = auth
+        self.response_cls   = kwargs.get('response_class', RTResponse)
+        self.logger         = logging.getLogger('rtkit')
 
     def get(self, path=None, headers=None):
         return self.request('GET', path, headers=headers)
@@ -21,7 +21,6 @@ class RTResource(object):
         return self.request('POST', path, payload, headers)
 
     def request(self, method, path=None, payload=None, headers=None):
-        self.auth.login(self.uri)
         headers = headers or dict()
         headers.setdefault('Accept', 'text/plain')
         if payload:
@@ -30,9 +29,9 @@ class RTResource(object):
         self.logger.debug(headers)
         self.logger.debug('%r' % payload)
         req = Request(
-                self.uri+path,
-                payload,
-                headers,
+            url     = self.uri+path,
+            data    = payload,
+            headers = headers,
         )
         try:
             response = self.auth.open(req)
@@ -42,19 +41,16 @@ class RTResource(object):
 
 
 class RTResponse(object):
-    HEADER_PATTERN = '^RT/(?P<v>\d+\.\d+\.\d+)\s+(?P<s>(?P<i>\d+).+)'
-    HEADER = re.compile(HEADER_PATTERN)
-    COMMENT_PATTERN = '^#\s+.+$'
-    COMMENT = re.compile(COMMENT_PATTERN)
-    SECTION_PATTERN = '^--'
-    SECTION = re.compile(SECTION_PATTERN, re.M|re.U)
+    HEADER  = re.compile(r'^RT/(?P<v>\d+\.\d+\.\d+)\s+(?P<s>(?P<i>\d+).+)')
+    COMMENT = re.compile(r'^#\s+.+$')
+    SECTION = re.compile(r'^--', re.M|re.U)
 
     def __init__(self, request, response):
-        self.headers = response.headers
-        self.body = response.read()
+        self.headers    = response.headers
+        self.body       = response.read()
         self.status_int = response.code
-        self.status = '{0} {1}'.format(response.code, response.msg)
-        self.logger = logging.getLogger('rtkit')
+        self.status     = '{0} {1}'.format(response.code, response.msg)
+        self.logger     = logging.getLogger('rtkit')
         self.logger.info(request.get_method())
         self.logger.info(request.get_full_url())
         self.logger.debug('HTTP_STATUS: {0}'.format(self.status))

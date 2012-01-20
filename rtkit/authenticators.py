@@ -1,49 +1,51 @@
 import urllib
 import urllib2
 import cookielib
-import base64
 
 __all__ = ['BasicAuthenticator', 'CookieAuthenticator',]
 
 class AbstractAuthenticator(object):
-    def __init__(self, username, password, *handlers):
-        self.opener = urllib2.build_opener(*handlers)
-        self.username = username
-        self.password = password
+    def __init__(self, username, password, url, *handlers):
+        self.opener     = urllib2.build_opener(*handlers)
+        self.username   = username
+        self.password   = password
+        self.url        = url
+        self._logged    = True
 
-    def login(self, uri):
-        pass
+    def login(self):
+        if self._logged:
+            return
+        self._login()
+        self._logged = True
+
+    def _login(self):
+        raise NotImplementedError
 
     def open(self, request):
+        self.login()
         return self.opener.open(request)
 
 
 class BasicAuthenticator(AbstractAuthenticator):
-    def __init__(self, username, password):
-        super(BasicAuthenticator, self).__init__(username, password)
-        encoded_auth = base64.encodestring('%s:%s' % (username, password))
-        self.auth_header = {
-            'authorization' : "basic %s" % encoded_auth.strip()
-        }
-
-    def open(self, request):
-        request.headers.update(self.auth_header)
-        return super(BasicAuthenticator, self).open(request)
+    def __init__(self, username, password, url):
+        passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
+        passman.add_password(None, url, username, password)
+        super(BasicAuthenticator, self).__init__(
+            username, password, url,
+            urllib2.HTTPBasicAuthHandler(passman)
+        )
 
 
 class CookieAuthenticator(AbstractAuthenticator):
-    def __init__(self, username, password):
+    def __init__(self, username, password, url):
         super(CookieAuthenticator, self).__init__(
-            username, password,
+            username, password, url,
             urllib2.HTTPCookieProcessor(cookielib.LWPCookieJar())
         )
-        self._login = False
+        self._logged = False
 
-    def login(self, uri):
-        if self._login:
-            return
+    def _login(self):
         data = {'user': self.username, 'pass': self.password}
         super(CookieAuthenticator, self).open(
-            urllib2.Request(uri, urllib.urlencode(data))
+            urllib2.Request(self.url, urllib.urlencode(data))
         )
-        self._login = True

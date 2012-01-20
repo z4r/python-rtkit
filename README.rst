@@ -72,8 +72,9 @@ Basic Authentication
     set_logging('debug')
     logger = logging.getLogger('rtkit')
 
-    auth = BasicAuthenticator('<USER>', '<PWD>')
-    resource = RTResource('http://<HOST>/REST/1.0/', auth)
+    url = 'http://<HOST>/REST/1.0/'
+    auth = BasicAuthenticator('<USER>', '<PWD>', url)
+    resource = RTResource(url, auth)
 
 Cookie-based Authentication
 ---------------------------
@@ -89,8 +90,9 @@ Cookie-based Authentication
     set_logging('debug')
     logger = logging.getLogger('rtkit')
 
-    auth = CookieAuthenticator('<USER>', '<PWD>')
-    resource = RTResource('http://<HOST>/REST/1.0/', auth)
+    url = 'http://<HOST>/REST/1.0/'
+    auth = CookieAuthenticator('<USER>', '<PWD>', url)
+    resource = RTResource(url, auth)
 
 Create ticket
 -------------
