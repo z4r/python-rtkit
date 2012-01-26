@@ -29,6 +29,7 @@ setup(
     version=version,
     author=author,
     author_email=email,
+    url='http://github.com/z4r/python-rtkit',
     maintainer=author,
     maintainer_email=email,
     description=description,
