@@ -13,6 +13,10 @@ Installation
 ============
 Using pip::
 
+    $ pip install python-rtkit
+
+Using pip dev::
+
     $ pip install git+https://github.com/z4r/python-rtkit
 
 .. _summary:

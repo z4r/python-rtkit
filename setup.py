@@ -6,8 +6,8 @@ wd = os.path.dirname(os.path.abspath(__file__))
 os.chdir(wd)
 sys.path.insert(1, wd)
 
-name = 'rtkit'
-pkg = __import__(name)
+name = 'python-rtkit'
+pkg = __import__('rtkit')
 
 author, email = pkg.__author__.rsplit(' ', 1)
 email = email.strip('<>')
@@ -17,7 +17,7 @@ classifiers = pkg.__classifiers__
 
 readme = open(os.path.join(wd, 'README.rst'),'r').readlines()
 description = readme[1]
-long_description = '\n'.join(readme)
+long_description = ''.join(readme)
 
 try:
     reqs = open(os.path.join(os.path.dirname(__file__), 'requirements.txt')).read()
