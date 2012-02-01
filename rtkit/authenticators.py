@@ -46,6 +46,6 @@ class CookieAuthenticator(AbstractAuthenticator):
 
     def _login(self):
         data = {'user': self.username, 'pass': self.password}
-        super(CookieAuthenticator, self).open(
+        self.opener.open(
             urllib2.Request(self.url, urllib.urlencode(data))
         )

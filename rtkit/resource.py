@@ -40,7 +40,7 @@ class RTResource(object):
 
 
 class RTResponse(object):
-    HEADER  = re.compile(r'^RT/(?P<v>\d+\.\d+\.\d+)\s+(?P<s>(?P<i>\d+).+)')
+    HEADER  = re.compile(r'^RT/(?P<v>.+)\s+(?P<s>(?P<i>\d+).+)')
     COMMENT = re.compile(r'^#\s+.+$')
     SECTION = re.compile(r'^--', re.M|re.U)
 
