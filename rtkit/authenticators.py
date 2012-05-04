@@ -1,8 +1,9 @@
 import urllib
 import urllib2
 import cookielib
+from urllib2_kerberos import HTTPKerberosAuthHandler
 
-__all__ = ['BasicAuthenticator', 'CookieAuthenticator',]
+__all__ = ['BasicAuthenticator', 'CookieAuthenticator', 'KerberosAuthenticator',]
 
 class AbstractAuthenticator(object):
     def __init__(self, username, password, url, *handlers):
@@ -49,3 +50,14 @@ class CookieAuthenticator(AbstractAuthenticator):
         self.opener.open(
             urllib2.Request(self.url, urllib.urlencode(data))
         )
+
+class KerberosAuthenticator(AbstractAuthenticator):
+    def __init__(self, username, password, url):
+        super(KerberosAuthenticator, self).__init__(
+            username, password, url,
+            HTTPKerberosAuthHandler()
+        )
+
+
+        
+        
