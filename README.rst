@@ -57,10 +57,10 @@ More detailed version: `Request Tracker Wiki`_
 | 15 | R  | Search tickets                 | search/ticket?query=<q>&orderby=<o>&format=<f>         |
 +----+----+--------------------------------+--------------------------------------------------------+
 
-.. _overview:
+.. _authentication_handlers:
 
-Overview on Low Level API
-=========================
+Authentication Handlers
+=======================
 
 Basic Authentication
 --------------------
@@ -93,6 +93,29 @@ Cookie-based Authentication
     logger = logging.getLogger('rtkit')
 
     resource = RTResource('http://<HOST>/REST/1.0/', '<USER>', '<PWD>', CookieAuthenticator)
+
+Kerberos Authentication
+---------------------------
+
+::
+
+    from rtkit.resource import RTResource
+    from rtkit.authenticators import KerberosAuthenticator
+    from rtkit.errors import RTResourceError
+
+    from rtkit import set_logging
+    import logging
+    set_logging('debug')
+    logger = logging.getLogger('rtkit')
+
+    resource = RTResource(url, None, None, KerberosAuthenticator)
+
+.. warning:: Remeber to install `urllib2_kerberos`.
+
+.. _overview:
+
+Overview on Low Level API
+=========================
 
 Create ticket
 -------------
