@@ -39,6 +39,7 @@ __doc__ = """
 """ % (__version__, __author__, __license__)
 
 import logging
+logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 LOG_LEVELS = {
     'critical': logging.CRITICAL,
@@ -51,11 +52,8 @@ LOG_LEVELS = {
 def set_logging(level, handler=None):
     if not handler:
         handler = logging.StreamHandler()
-    format = r'[%(levelname)s] %(message)s'
-    handler.setFormatter(logging.Formatter(format))
-    loggers = [
-        logging.getLogger('rtkit'),
-    ]
-    for logger in loggers:
-        logger.setLevel(LOG_LEVELS.get(level, logging.INFO))
-        logger.addHandler(handler)
+    fmt = r'[%(levelname)s] %(message)s'
+    handler.setFormatter(logging.Formatter(fmt))
+    logger = logging.getLogger(__name__)
+    logger.setLevel(LOG_LEVELS.get(level, logging.INFO))
+    logger.addHandler(handler)
