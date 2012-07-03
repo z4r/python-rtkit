@@ -39,7 +39,13 @@ __doc__ = """
 """ % (__version__, __author__, __license__)
 
 import logging
-logging.getLogger(__name__).addHandler(logging.NullHandler())
+try:
+    from logging import NullHandler
+except ImportError:
+    class NullHandler(logging.Handler):
+        def emit(self, record):
+            pass
+logging.getLogger(__name__).addHandler(NullHandler())
 
 LOG_LEVELS = {
     'critical': logging.CRITICAL,
