@@ -7,6 +7,6 @@ install:
   - pip install https://github.com/dcramer/pyflakes/tarball/master
   - pip install -r requirements.txt --use-mirrors
 script:
-  - pep8 --exclude=migrations --ignore=E501 rtkit || exit 1
+  - pep8 --ignore=E501 rtkit || exit 1
   - pyflakes -x W rtkit || exit 1
   - nosetests --with-doctest
