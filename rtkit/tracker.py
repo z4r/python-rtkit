@@ -1,6 +1,7 @@
 from rtkit.resource import RTResource
 from entities import *
 
+
 class Tracker(RTResource):
     def __init__(self, url, username, password, auth, language='en'):
         super(Tracker, self).__init__(url, username, password, auth)
@@ -47,7 +48,3 @@ class Tracker(RTResource):
             path += '?{0}'.format(format)
         r = self.get(path=path)
         return SubEntity(**dict(r.parsed[0]))
-
-
-
-

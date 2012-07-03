@@ -2,15 +2,20 @@ import urllib
 import urllib2
 import cookielib
 
-__all__ = ['BasicAuthenticator', 'CookieAuthenticator', 'KerberosAuthenticator',]
+__all__ = [
+    'BasicAuthenticator',
+    'CookieAuthenticator',
+    'KerberosAuthenticator',
+]
+
 
 class AbstractAuthenticator(object):
     def __init__(self, username, password, url, *handlers):
-        self.opener     = urllib2.build_opener(*handlers)
-        self.username   = username
-        self.password   = password
-        self.url        = url
-        self._logged    = True
+        self.opener = urllib2.build_opener(*handlers)
+        self.username = username
+        self.password = password
+        self.url = url
+        self._logged = True
 
     def login(self):
         if self._logged:

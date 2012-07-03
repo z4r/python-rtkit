@@ -1,3 +1,13 @@
+__all__ = [
+    'RTUnknownTypeError',
+    'RTInvalidError',
+    'RTValueError',
+    'RTResourceError',
+    'RTNotFoundError',
+    'RTUnauthorized',
+]
+
+
 class RTResourceError(Exception):
     """ default error class """
     status_int = None
@@ -10,8 +20,10 @@ class RTResourceError(Exception):
 
     def _get_message(self):
         return self.msg
+
     def _set_message(self, msg):
         self.msg = msg or ''
+
     message = property(_get_message, _set_message)
 
     def __str__(self):
@@ -42,13 +54,3 @@ class RTValueError(RTResourceError):
 
 class RTUnauthorized(RTResourceError):
     status_int = 401
-
-
-__all__ = [
-    'RTUnknownTypeError',
-    'RTInvalidError',
-    'RTValueError',
-    'RTResourceError',
-    'RTNotFoundError',
-    'RTUnauthorized',
-]

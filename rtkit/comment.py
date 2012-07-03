@@ -20,19 +20,24 @@ CREATED = re.compile(CREATED_PATTERN)
 UNAUTHORIZED_PATTERN = '# You are not allowed to modify (?P<t>\w+) (?P<r>\w+).'
 UNAUTHORIZED = re.compile(UNAUTHORIZED_PATTERN)
 
+
 class RTCreated(Exception):
     def __init__(self, msg):
         m = CREATED.match(msg)
         self.id = '{0}/{1}'.format(m.group('t').lower(), m.group('r'))
 
+
 class RTNoMatch(Exception):
     pass
+
 
 def _clear(section, lineno=0):
     return section[lineno].lstrip('# ').rstrip('.')
 
+
 def _pass(section, lineno=0):
     return section[lineno]
+
 
 def check(section):
     """Parse and Dispatch RT errors

@@ -9,9 +9,9 @@ from urllib2 import Request, HTTPError
 
 class RTResource(object):
     def __init__(self, url, username, password, auth, **kwargs):
-        self.auth           = auth(username, password, url)
-        self.response_cls   = kwargs.get('response_class', RTResponse)
-        self.logger         = logging.getLogger('rtkit')
+        self.auth = auth(username, password, url)
+        self.response_cls = kwargs.get('response_class', RTResponse)
+        self.logger = logging.getLogger('rtkit')
 
     def get(self, path=None, headers=None):
         return self.request('GET', path, headers=headers)
@@ -28,9 +28,9 @@ class RTResource(object):
         self.logger.debug(headers)
         self.logger.debug('%r' % payload)
         req = Request(
-            url     = self.auth.url+path,
-            data    = payload,
-            headers = headers,
+            url=self.auth.url + path,
+            data=payload,
+            headers=headers,
         )
         try:
             response = self.auth.open(req)
@@ -40,16 +40,16 @@ class RTResource(object):
 
 
 class RTResponse(object):
-    HEADER  = re.compile(r'^RT/(?P<v>.+)\s+(?P<s>(?P<i>\d+).+)')
+    HEADER = re.compile(r'^RT/(?P<v>.+)\s+(?P<s>(?P<i>\d+).+)')
     COMMENT = re.compile(r'^#\s+.+$')
-    SECTION = re.compile(r'^--', re.M|re.U)
+    SECTION = re.compile(r'^--', re.M | re.U)
 
     def __init__(self, request, response):
-        self.headers    = response.headers
-        self.body       = response.read()
+        self.headers = response.headers
+        self.body = response.read()
         self.status_int = response.code
-        self.status     = '{0} {1}'.format(response.code, response.msg)
-        self.logger     = logging.getLogger('rtkit')
+        self.status = '{0} {1}'.format(response.code, response.msg)
+        self.logger = logging.getLogger('rtkit')
         self.logger.info(request.get_method())
         self.logger.info(request.get_full_url())
         self.logger.debug('HTTP_STATUS: {0}'.format(self.status))
@@ -61,7 +61,7 @@ class RTResponse(object):
             self.logger.error('"{0}" is not valid'.format(self.body))
             self.status = self.body
             self.status_int = 500
-        self.logger.debug('%r'%self.body)
+        self.logger.debug('%r' % self.body)
         try:
             decoder = self._decode
             if self.status_int == 409:
@@ -73,7 +73,6 @@ class RTResponse(object):
             self.status = '{0} {1}'.format(e.status_int, e.msg)
         self.logger.debug('RESOURCE_STATUS: {0}'.format(self.status))
         self.logger.info(self.parsed)
-
 
     @classmethod
     def _parse(cls, body, decoder):
@@ -120,9 +119,7 @@ class RTResponse(object):
         """
         try:
             lines = ifilterfalse(cls.COMMENT.match, lines)
-            return [(k, v.strip(' '))
-                for k,v in [l.split(':', 1)
-                    for l in lines]]
+            return [(k, v.strip(' ')) for k, v in [l.split(':', 1) for l in lines]]
         except ValueError:
             return []
 
@@ -134,9 +131,7 @@ class RTResponse(object):
         >>>
         """
         lines = filter(cls.COMMENT.match, lines)
-        return [(k.strip('# '), v.strip(' '))
-            for k,v in [l.split(':', 1)
-                for l in lines]]
+        return [(k.strip('# '), v.strip(' ')) for k, v in [l.split(':', 1) for l in lines]]
 
     @classmethod
     def _build(cls, body):
@@ -165,8 +160,8 @@ class RTResponse(object):
                 if cls.HEADER.match(line):
                     continue
                 if line[0].isspace():
-                   logic_lines[-1] += ' '+line.strip(' ')
+                    logic_lines[-1] += ' ' + line.strip(' ')
                 else:
-                   logic_lines.append(line)
+                    logic_lines.append(line)
             return logic_lines
         return [build_section(b) for b in cls.SECTION.split(body)]

@@ -1,5 +1,6 @@
 __all__ = ['User', 'Queue', 'Ticket', 'Attachment', 'History', 'Links']
 
+
 class RTEntity(object):
     def __init__(self, id):
         self._id = id
@@ -53,16 +54,16 @@ class Ticket(RTEntity):
         self.status = kwargs.get('Status')
         self.priority = kwargs.get('Priority')
         self.delta = {
-            'worked' : kwargs.get('TimeWorked'),
-            'estimated' : kwargs.get('TimeEstimated'),
-            'left' : kwargs.get('TimeLeft'),
+            'worked': kwargs.get('TimeWorked'),
+            'estimated': kwargs.get('TimeEstimated'),
+            'left': kwargs.get('TimeLeft'),
         }
         self.date = {
-            'created' : kwargs.get('Created'),
-            'started' : kwargs.get('Started'),
-            'due' : kwargs.get('Due'),
-            'resolved' : kwargs.get('Resolved'),
-            'updated' : kwargs.get('LastUpdated'),
+            'created': kwargs.get('Created'),
+            'started': kwargs.get('Started'),
+            'due': kwargs.get('Due'),
+            'resolved': kwargs.get('Resolved'),
+            'updated': kwargs.get('LastUpdated'),
         }
 
     def __str__(self):
@@ -71,6 +72,7 @@ class Ticket(RTEntity):
     @staticmethod
     def api():
         return 'ticket'
+
 
 class Attachment(RTEntity):
     def __init__(self, id, **kwargs):

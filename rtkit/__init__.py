@@ -1,5 +1,5 @@
 __author__ = 'Andrea De Marco <24erre@gmail.com>'
-__version__ = '0.2.3'
+__version__ = '0.2.4'
 __classifiers__ = [
     'Development Status :: 4 - Beta',
     'Intended Audience :: Developers',
@@ -52,8 +52,9 @@ LOG_LEVELS = {
     'error': logging.ERROR,
     'warning': logging.WARNING,
     'info': logging.INFO,
-    'debug': logging.DEBUG
+    'debug': logging.DEBUG,
 }
+
 
 def set_logging(level, handler=None):
     if not handler:
