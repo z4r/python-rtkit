@@ -1,1 +1,1 @@
-include README.rst *.txt
+include README.rst LICENSE *.txt
