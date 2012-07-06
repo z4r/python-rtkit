@@ -2,6 +2,7 @@ from multiprocessing import Process
 import unittest2 as unittest
 import time
 
+
 class TestCaseWithFlask(unittest.TestCase):
     application = NotImplemented
 

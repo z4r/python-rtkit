@@ -7,6 +7,6 @@ install:
 before_script:
   - pip install -r test_requirements.txt --use-mirrors
 script:
-  - pep8 --ignore=E501 rtkit || exit 1
-  - pyflakes -x W rtkit || exit 1
+  - pep8 --ignore=E501 rtkit || return 1
+  - pyflakes -x W rtkit || return 1
   - py.test --doctest-modules rtkit -v

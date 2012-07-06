@@ -15,11 +15,11 @@ class TestCaseRT(TestCaseWithFlask):
     def test_create_tkt(self):
         message = 'My useless\ntext on\nthree lines.'
         content = {
-                'content': {
-                            'Queue': 1,
-                            'Subject' : 'New Ticket',
-                            'Text' : message.replace('\n', '\n '),
-                        }
+            'content': {
+                'Queue': 1,
+                'Subject': 'New Ticket',
+                'Text': message.replace('\n', '\n '),
+            }
         }
         response = self.resource.post(path='ticket/new', payload=content,)
         self.assertEqual(response.parsed, [[('id', 'ticket/1')]])
@@ -29,11 +29,11 @@ class TestCaseRT(TestCaseWithFlask):
     def test_create_tkt_noqueue(self):
         message = 'My useless\ntext on\nthree lines.'
         content = {
-                'content': {
-                            'Queue': 'ERR',
-                            'Subject' : 'New Ticket',
-                            'Text' : message.replace('\n', '\n '),
-                        }
+            'content': {
+                'Queue': 'ERR',
+                'Subject': 'New Ticket',
+                'Text': message.replace('\n', '\n '),
+            }
         }
         response = self.resource.post(path='ticket/new', payload=content,)
         self.assertEqual(response.parsed, [])
@@ -43,14 +43,13 @@ class TestCaseRT(TestCaseWithFlask):
     def test_create_tkt_noperm(self):
         message = 'My useless\ntext on\nthree lines.'
         content = {
-                'content': {
-                            'Queue': 'NOPERM',
-                            'Subject' : 'New Ticket',
-                            'Text' : message.replace('\n', '\n '),
-                        }
+            'content': {
+                'Queue': 'NOPERM',
+                'Subject': 'New Ticket',
+                'Text': message.replace('\n', '\n '),
+            }
         }
         response = self.resource.post(path='ticket/new', payload=content,)
         self.assertEqual(response.parsed, [])
         self.assertEqual(response.status_int, 400)
         self.assertEqual(response.status, "400 No permission to create tickets in the queue '___Admin'")
-

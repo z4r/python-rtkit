@@ -4,12 +4,14 @@ from flask.globals import request
 from flask.helpers import make_response
 from rtkit.parser import RTParser
 
+
 class NullHandler(logging.Handler):
     def emit(self, record):
         pass
 logging.root.addHandler(NullHandler())
 
 app = Flask(__name__)
+
 
 @app.route('/ticket/new', methods=['POST'])
 def create_tkt():
