@@ -89,6 +89,12 @@ class TestCaseTicket(TestCaseWithFlask):
         self.assertEqual(response.status_int, 404)
         self.assertEqual(response.status, '404 Ticket 2 does not exist')
 
+    def test_read_tkt_credentials(self):
+        response = self.resource.get(path='ticket/3')
+        self.assertEqual(response.parsed, [])
+        self.assertEqual(response.status_int, 401)
+        self.assertEqual(response.status, '401 Credentials required')
+
     def test_update_tkt_syntax(self):
         content = {'content': {'Queue': 3, }}
         response = self.resource.post(path='ticket/1', payload=content,)

@@ -31,6 +31,8 @@ def readupdate_tkt(tid):
     if request.method == 'GET':
         if tid == '2':
             body = 'RT/3.8.10 200 Ok\n\n# Ticket 2 does not exist.\n\n\n'
+        elif tid == '3':
+            body = 'RT/3.8.10 401 Credentials required\n'
         else:
             body = '''RT/3.8.10 200 Ok
 

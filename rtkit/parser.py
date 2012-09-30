@@ -37,7 +37,7 @@ class RTParser(object):
         if len(section) == 1:
             try:
                 comment.check(section[0])
-            except comment.RTNoMatch:
+            except (comment.RTNoMatch, IndexError):
                 section = ''
             except comment.RTCreated as e:
                 section = [['id: {0}'.format(e.id)]]
@@ -54,7 +54,7 @@ class RTParser(object):
         try:
             lines = ifilterfalse(cls.COMMENT.match, lines)
             return [(k, v.strip(' ')) for k, v in [l.split(':', 1) for l in lines]]
-        except ValueError:
+        except ValueError, IndexError:
             return []
 
     @classmethod
