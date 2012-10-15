@@ -125,12 +125,11 @@ Create ticket
 
 ::
 
-    message = 'My useless\ntext on\nthree lines.'
     content = {
         'content': {
             'Queue': 1,#'', 2
             'Subject' : 'New Ticket',
-            'Text' : message.replace('\n', '\n '),
+            'Text' : 'My useless\ntext on\nthree lines.',
         }
     }
     try:

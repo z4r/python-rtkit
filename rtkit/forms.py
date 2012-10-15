@@ -142,6 +142,15 @@ def encode(value, headers):
 
 
 def _content_encode(value):
+    r"""
+    >>> _content_encode({
+    ...     'Action' : 'comment',
+    ...     'Text' : 'Comment\nwith\nseveral\nlines',
+    ... })
+    'Action: comment\nText: Comment\n with\n several\n lines'
+    """
+    if 'Text' in value:
+        value['Text'] = '\n '.join(value['Text'].splitlines())
     return '\n'.join(['{0}: {1}'.format(k, v) for k, v in value.iteritems()])
 
 
