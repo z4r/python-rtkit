@@ -147,11 +147,11 @@ def _content_encode(value):
     ...     'Action' : 'comment',
     ...     'Text' : 'Comment\nwith\nseveral\nlines',
     ... })
-    'Action: comment\nText: Comment\n with\n several\n lines'
+    'Action:%20comment%0AText:%20Comment%0A%20with%0A%20several%0A%20lines'
     """
     if 'Text' in value:
         value['Text'] = '\n '.join(value['Text'].splitlines())
-    return '\n'.join(['{0}: {1}'.format(k, v) for k, v in value.iteritems()])
+    return url_quote('\n'.join(['{0}: {1}'.format(k, v) for k, v in value.iteritems()]))
 
 
 def url_quote(s, charset='utf-8', safe='/:'):
