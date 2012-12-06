@@ -131,7 +131,7 @@ class BoundaryItem(object):
 
 def encode(value, headers):
     if len(value) == 1 and 'content' in value:
-        value = 'content={0}'.format(_content_encode(value['content']))
+        value = 'content={0}'.format(url_quote(_content_encode(value['content'])))
         headers.setdefault('Content-Type', 'application/x-www-form-urlencoded; charset=utf-8')
     else:
         mf = MultipartForm(value, BOUNDARY)
@@ -147,11 +147,11 @@ def _content_encode(value):
     ...     'Action' : 'comment',
     ...     'Text' : 'Comment\nwith\nseveral\nlines',
     ... })
-    'Action:%20comment%0AText:%20Comment%0A%20with%0A%20several%0A%20lines'
+    'Action: comment\nText: Comment\n with\n several\n lines'
     """
     if 'Text' in value:
         value['Text'] = '\n '.join(value['Text'].splitlines())
-    return url_quote('\n'.join(['{0}: {1}'.format(k, v) for k, v in value.iteritems()]))
+    return '\n'.join(['{0}: {1}'.format(k, v) for k, v in value.iteritems()])
 
 
 def url_quote(s, charset='utf-8', safe='/:'):
