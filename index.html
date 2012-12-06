@@ -1,0 +1,271 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>rtkit by z4r</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>rtkit</h1>
+        <p>Python Api for Request Tracker's REST interface</p>
+        <p class="view"><a href="https://github.com/z4r/python-rtkit">View the Project on GitHub <small>z4r/python-rtkit</small></a></p>
+        <ul>
+          <li><a href="https://github.com/z4r/python-rtkit/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/z4r/python-rtkit/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/z4r/python-rtkit">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>Request Tracker REST Interface</h1>
+
+<p><a href="https://travis-ci.org/z4r/python-rtkit"><img src="https://secure.travis-ci.org/z4r/python-rtkit.png?branch=master" alt="travis"></a></p>
+
+<p><a href="http://bestpractical.com/rt/">Request Tracker</a> data access python module for REST interface.</p>
+
+<h2>Installation</h2>
+
+<p>Using pip stable:</p>
+
+<pre><code>$ pip install python-rtkit
+</code></pre>
+
+<p>Using pip dev:</p>
+
+<pre><code>$ pip install git+https://github.com/z4r/python-rtkit
+</code></pre>
+
+<h2>RT REST API Summary</h2>
+
+<p>More detailed version: <a href="http://requesttracker.wikia.com/wiki/REST">Request Tracker Wiki</a></p>
+
+<table>
+<tr>
+<td>01</td>
+<td>W</td>
+<td>Create ticket</td>
+<td>ticket/new</td>
+</tr>
+<tr>
+<td>02</td>
+<td>RW</td>
+<td>Read/Update ticket</td>
+<td>ticket/&lt;ticket-id&gt;</td>
+</tr>
+<tr>
+<td>03</td>
+<td>W</td>
+<td>Create ticket comment</td>
+<td>ticket/&lt;ticket-id&gt;/comment</td>
+</tr>
+<tr>
+<td>04</td>
+<td>RW</td>
+<td>Read/Update ticket links</td>
+<td>ticket/&lt;ticket-id&gt;/links</td>
+</tr>
+<tr>
+<td>05</td>
+<td>R</td>
+<td>Read ticket attachments</td>
+<td>ticket/&lt;ticket-id&gt;/attachments</td>
+</tr>
+<tr>
+<td>06</td>
+<td>R</td>
+<td>Read ticket attachment</td>
+<td>ticket/&lt;ticket-id&gt;/attachments/&lt;attachment-id&gt;</td>
+</tr>
+<tr>
+<td>07</td>
+<td>R</td>
+<td>Read ticket attachment content</td>
+<td>ticket/&lt;ticket-id&gt;/attachments/&lt;attachment-id&gt;/content</td>
+</tr>
+<tr>
+<td>08</td>
+<td>R</td>
+<td>Read ticket history</td>
+<td>ticket/&lt;ticket-id&gt;/history</td>
+</tr>
+<tr>
+<td>09</td>
+<td>R</td>
+<td>Read detailed ticket history</td>
+<td>ticket/&lt;ticket-id&gt;/history?format=l</td>
+</tr>
+<tr>
+<td>10</td>
+<td>R</td>
+<td>Read ticket history item</td>
+<td>ticket/&lt;ticket-id&gt;/history/id/&lt;history-id&gt;</td>
+</tr>
+<tr>
+<td>11</td>
+<td>R</td>
+<td>Read user by id</td>
+<td>user/&lt;user-id&gt;</td>
+</tr>
+<tr>
+<td>12</td>
+<td>R</td>
+<td>Read user by name</td>
+<td>user/&lt;user-Name&gt;</td>
+</tr>
+<tr>
+<td>13</td>
+<td>R</td>
+<td>Read queue by id</td>
+<td>queue/&lt;queue-id&gt;</td>
+</tr>
+<tr>
+<td>14</td>
+<td>R</td>
+<td>Read queue by name</td>
+<td>queue/&lt;queue-Name&gt;</td>
+</tr>
+<tr>
+<td>15</td>
+<td>R</td>
+<td>Search tickets</td>
+<td>search/ticket?query=&lt;q&gt;&amp;orderby=&lt;o&gt;&amp;format=&lt;f&gt;</td>
+</tr>
+</table><h2>Authentication Handlers</h2>
+
+<h3>Basic Authentication</h3>
+
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">rtkit.resource</span> <span class="kn">import</span> <span class="n">RTResource</span>
+<span class="kn">from</span> <span class="nn">rtkit.authenticators</span> <span class="kn">import</span> <span class="n">BasicAuthenticator</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s">'http://&lt;HOST&gt;/REST/1.0/'</span>
+<span class="n">resource</span> <span class="o">=</span> <span class="n">RTResource</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="s">'&lt;USER&gt;'</span><span class="p">,</span> <span class="s">'&lt;PWD&gt;'</span><span class="p">,</span> <span class="n">BasicAuthenticator</span><span class="p">)</span>
+</pre></div>
+
+<h3>Cookie-based Authentication</h3>
+
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">rtkit.resource</span> <span class="kn">import</span> <span class="n">RTResource</span>
+<span class="kn">from</span> <span class="nn">rtkit.authenticators</span> <span class="kn">import</span> <span class="n">CookieAuthenticator</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s">'http://&lt;HOST&gt;/REST/1.0/'</span>
+<span class="n">resource</span> <span class="o">=</span> <span class="n">RTResource</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="s">'&lt;USER&gt;'</span><span class="p">,</span> <span class="s">'&lt;PWD&gt;'</span><span class="p">,</span> <span class="n">CookieAuthenticator</span><span class="p">)</span>
+</pre></div>
+
+<h3>Kerberos Authentication</h3>
+
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">rtkit.resource</span> <span class="kn">import</span> <span class="n">RTResource</span>
+<span class="kn">from</span> <span class="nn">rtkit.authenticators</span> <span class="kn">import</span> <span class="n">KerberosAuthenticator</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s">'http://&lt;HOST&gt;/REST/1.0/'</span>
+<span class="n">resource</span> <span class="o">=</span> <span class="n">RTResource</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">KerberosAuthenticator</span><span class="p">)</span>
+</pre></div>
+
+<blockquote>
+<p>Remeber to install <code>urllib2_kerberos</code></p>
+</blockquote>
+
+<h2>Logging</h2>
+
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">rtkit</span> <span class="kn">import</span> <span class="n">set_logging</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">set_logging</span><span class="p">(</span><span class="s">'debug'</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">'rtkit'</span><span class="p">)</span>
+</pre></div>
+
+<h2>Create ticket</h2>
+
+<div class="highlight"><pre><span class="n">content</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'content'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">'Queue'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s">'Subject'</span> <span class="p">:</span> <span class="s">'New Ticket'</span><span class="p">,</span>
+        <span class="s">'Text'</span> <span class="p">:</span> <span class="s">'My useless</span><span class="se">\n</span><span class="s">text on</span><span class="se">\n</span><span class="s">three lines.'</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s">'ticket/new'</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">content</span><span class="p">,)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">parsed</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">RTResourceError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_int</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">parsed</span><span class="p">)</span>
+</pre></div>
+
+<h2>Read a ticket</h2>
+
+<div class="highlight"><pre><span class="k">try</span><span class="p">:</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s">'ticket/1'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">parsed</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">r</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">RTResourceError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_int</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">parsed</span><span class="p">)</span>
+</pre></div>
+
+<h2>Edit a ticket or ticket's links</h2>
+
+<p>Ticket (or ticket's links) editing hasn't <strong>all-or-nothing behaviour</strong>; so it's very difficult to capture errors.
+For example trying to change Queue to a not admitted one (or to edit an unknown field) RT will return:</p>
+
+<pre><code>RT/3.8.10 409 Syntax Error
+
+# queue: You may not create requests in that queue.
+# spam: Unknown field.
+
+id:
+Subject: Try Edit Ticket
+TimeWorked: 1
+Queue: 2
+Spam: 10
+</code></pre>
+
+<p>For now <code>rtkit</code> will raise <code>SyntaxError</code> with the errors list in <code>e.response.parsed</code></p>
+
+<h2>Comment on a Ticket with Attachments</h2>
+
+<p>Usually your requests will be something like this.</p>
+
+<div class="highlight"><pre><span class="k">try</span><span class="p">:</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">'content'</span> <span class="p">:{</span>
+            <span class="s">'Action'</span> <span class="p">:</span> <span class="s">'comment'</span><span class="p">,</span>
+            <span class="s">'Text'</span> <span class="p">:</span> <span class="s">'Comment with attach'</span><span class="p">,</span>
+            <span class="s">'Attachment'</span> <span class="p">:</span> <span class="s">'x.txt, 140x105.jpg'</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s">'attachment_1'</span> <span class="p">:</span> <span class="nb">file</span><span class="p">(</span><span class="s">'x.txt'</span><span class="p">),</span>
+        <span class="s">'attachment_2'</span> <span class="p">:</span> <span class="nb">file</span><span class="p">(</span><span class="s">'140x105.jpg'</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s">'ticket/16/comment'</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">params</span><span class="p">,)</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">parsed</span><span class="p">:</span>
+       <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">r</span><span class="p">:</span>
+           <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">RTResourceError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_int</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">parsed</span><span class="p">)</span>
+</pre></div>
+
+<h2> License</h2>
+
+<p>This software is licensed under the <code>Apache License 2.0</code>.
+See the <code>LICENSE</code> file in the top distribution directory for the full license text.</p>
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/z4r">z4r</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
