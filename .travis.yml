@@ -7,5 +7,4 @@ install:
 before_script:
   - pip install -r test_requirements.txt --use-mirrors
 script:
-  - pyflakes -x W rtkit
   - py.test --doctest-modules --pep8 rtkit -v
