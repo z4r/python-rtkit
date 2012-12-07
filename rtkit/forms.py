@@ -131,7 +131,7 @@ class BoundaryItem(object):
 
 def encode(value, headers):
     if len(value) == 1 and 'content' in value:
-        value = 'content={0}'.format(url_quote(_content_encode(value['content'])))
+        value = 'content={0}'.format(_content_encode(value['content']))
         headers.setdefault('Content-Type', 'application/x-www-form-urlencoded; charset=utf-8')
     else:
         mf = MultipartForm(value, BOUNDARY)

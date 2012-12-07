@@ -1,4 +1,5 @@
-pep8
-https://github.com/dcramer/pyflakes/tarball/master
+https://github.com/kevinw/pyflakes/tarball/master
 pytest
-httpretty
+pytest-pep8
+#httpretty
+https://github.com/z4r/HTTPretty/tarball/master
