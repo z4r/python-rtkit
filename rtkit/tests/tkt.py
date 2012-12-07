@@ -4,7 +4,7 @@ from httpretty import httprettified, HTTPretty
 from rtkit.resource import RTResource
 from rtkit.authenticators import AbstractAuthenticator
 
-Expected = namedtuple('Expected', 'req_body req_headers parsed status_int status')
+Expected = namedtuple('Expected', 'req_body parsed status_int status')
 
 
 class TktTestCase(unittest.TestCase):
@@ -18,18 +18,6 @@ class TktTestCase(unittest.TestCase):
             }
         }
         self.req_body = 'content=Queue: 1\nText: My useless\n text on\n three lines.\nSubject: New Ticket'
-        self.req_headers_get = {
-            'connection': 'close',
-            'user-agent': 'Python-urllib/2.6',
-            'host': 'rtkit.test',
-            'accept': 'text/plain',
-            'accept-encoding': 'identity',
-        }
-        self.req_headers_post = self.req_headers_get.copy()
-        self.req_headers_post.update({
-            'content-length': '76',
-            'content-type': 'application/x-www-form-urlencoded; charset=utf-8',
-        })
 
     @httprettified
     def assertPost(self, body, expected, content=None):
@@ -61,7 +49,6 @@ class TktTestCase(unittest.TestCase):
             status_int=200,
             status='200 Ok',
             req_body=self.req_body,
-            req_headers=self.req_headers_post,
         )
         self.assertPost(
             body='RT/3.8.10 200 Ok\n\n# Ticket 1 created.\n\n',
@@ -74,7 +61,6 @@ class TktTestCase(unittest.TestCase):
             status_int=400,
             status='400 Could not create ticket. Queue not set',
             req_body=self.req_body,
-            req_headers=self.req_headers_post,
         )
         self.assertPost(
             body='RT/3.8.10 200 Ok\n\n# Could not create ticket.\n# Could not create ticket. Queue not set\n\n',
@@ -87,7 +73,6 @@ class TktTestCase(unittest.TestCase):
             status_int=400,
             status='400 No permission to create tickets in the queue \'___Admin\'',
             req_body=self.req_body,
-            req_headers=self.req_headers_post,
         )
         self.assertPost(
             body='RT/3.8.10 200 Ok\n\n# Could not create ticket.\n# No permission to create tickets in the queue \'___Admin\'\n\n',
@@ -123,7 +108,6 @@ class TktTestCase(unittest.TestCase):
             status_int=200,
             status='200 Ok',
             req_body='',
-            req_headers=self.req_headers_get,
         )
         self.assertGet(
             body='''RT/3.8.10 200 Ok
@@ -162,7 +146,6 @@ TimeLeft: 0
             status_int=404,
             status='404 Ticket 1 does not exist',
             req_body='',
-            req_headers=self.req_headers_get,
         )
         self.assertGet(
             body='RT/3.8.10 200 Ok\n\n# Ticket 1 does not exist.\n\n\n',
@@ -175,7 +158,6 @@ TimeLeft: 0
             status_int=401,
             status='401 Credentials required',
             req_body='',
-            req_headers=self.req_headers_get,
         )
         self.assertGet(
             body='RT/3.8.10 401 Credentials required\n',
@@ -183,13 +165,11 @@ TimeLeft: 0
         )
 
     def test_update_tkt_syntax_error(self):
-        self.req_headers_post.update({'content-length': '16'})
         expected = Expected(
             parsed=[[('queue', 'You may not create requests in that queue.')]],
             status_int=409,
             status='409 Syntax Error',
             req_body='content=Queue: 3',
-            req_headers=self.req_headers_post,
         )
         self.assertPost(
             body='RT/3.8.10 409 Syntax Error\n\n# queue: You may not create requests in that queue.\n\n',
@@ -198,16 +178,11 @@ TimeLeft: 0
         )
 
     def test_tkt_comment_with_attach(self):
-        self.req_headers_post.update({
-            'content-length': '760',
-            'content-type': 'multipart/form-data; boundary=xXXxXXyYYzzz',
-        })
         expected = Expected(
             parsed=[[]],
             status_int=200,
             status='200 Ok',
             req_body='--xXXxXXyYYzzz\r\nContent-Disposition: form-data; name="content"\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: 77\r\n\r\nAction: comment\nText: Comment with attach\nAttachment: x1.txt, x2.txt, 1x1.gif\r\n--xXXxXXyYYzzz\r\nContent-Disposition: form-data; name="attachment_2"; filename="rtkit/tests/attach/x2.txt"\r\nContent-Type: text/plain\r\nContent-Length: 15\r\n\r\nHello World!\n2\n\r\n--xXXxXXyYYzzz\r\nContent-Disposition: form-data; name="attachment_1"; filename="rtkit/tests/attach/x1.txt"\r\nContent-Type: text/plain\r\nContent-Length: 15\r\n\r\nHello World!\n1\n\r\n--xXXxXXyYYzzz\r\nContent-Disposition: form-data; name="attachment_3"; filename="rtkit/tests/attach/1x1.gif"\r\nContent-Type: image/gif\r\nContent-Length: 35\r\n\r\nGIF87a\x01\x00\x01\x00\x80\x00\x00\xcc\xcc\xcc\x96\x96\x96,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;\r\n--xXXxXXyYYzzz--\r\n',
-            req_headers=self.req_headers_post,
         )
         self.assertPost(
             body='RT/3.8.10 200 Ok\n\n# Message recorded\n\n',
