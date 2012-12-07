@@ -29,7 +29,6 @@ class TktTestCase(unittest.TestCase):
         self.assertEqual(HTTPretty.last_request.method, HTTPretty.POST)
         self.assertEqual(HTTPretty.last_request.path, '/ticket/new')
         self.assertEqual(HTTPretty.last_request.body, expected.req_body)
-        self.assertEqual(dict(HTTPretty.last_request.headers), expected.req_headers)
 
     @httprettified
     def assertGet(self, body, expected):
@@ -41,7 +40,6 @@ class TktTestCase(unittest.TestCase):
         self.assertEqual(HTTPretty.last_request.method, HTTPretty.GET)
         self.assertEqual(HTTPretty.last_request.path, '/ticket/1')
         self.assertEqual(HTTPretty.last_request.body, expected.req_body)
-        self.assertEqual(dict(HTTPretty.last_request.headers), expected.req_headers)
 
     def test_create_tkt(self):
         expected = Expected(
