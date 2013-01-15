@@ -1,4 +1,4 @@
 pytest
 pytest-pep8
-#httpretty
-https://github.com/z4r/HTTPretty/tarball/master
+httpretty
+#https://github.com/z4r/HTTPretty/tarball/master
