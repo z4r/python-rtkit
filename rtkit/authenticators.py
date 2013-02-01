@@ -1,4 +1,5 @@
 
+import os
 import urllib
 import urllib2
 import cookielib
@@ -8,10 +9,11 @@ __all__ = [
     'CookieAuthenticator',
     'KerberosAuthenticator',
 ]
-
+if os.environ.get('__GEN_DOCS__', None):
+    __all__.append("AbstractAuthenticator")
 
 class AbstractAuthenticator(object):
-    """Abstract Authenticator"""
+    """Abstract Base Authenticator"""
     
     def __init__(self, username, password, url, *handlers):
         self.opener = urllib2.build_opener(*handlers)
@@ -97,6 +99,12 @@ class CookieAuthenticator(AbstractAuthenticator):
 class KerberosAuthenticator(AbstractAuthenticator):
     """Authenticate using Kerberos
 
+    .. warning::
+    
+        * Requires the urllib2_kerberos 
+        * http://pypi.python.org/pypi/urllib2_kerberos/
+        * sudo easy_install urllib2_kerberos
+    
     .. doctest::
         
         from rtkit.resource import RTResource

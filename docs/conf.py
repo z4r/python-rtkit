@@ -19,6 +19,8 @@ import sys, os
 #sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath(os.path.join('.', '..')))
 
+os.environ['__GEN_DOCS__'] = "1"
+
 from rtkit import __version__ as VERSION
 from rtkit import __author__ as AUTHOR
 

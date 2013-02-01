@@ -1,6 +1,10 @@
 
+import os
+
 __all__ = ['User', 'Queue', 'Ticket', 'Attachment', 'History', 'Links']
 
+if os.environ.get('__GEN_DOCS__', None):
+    __all__.append("RTEntity")
 
 class RTEntity(object):
     """Base Object"""
@@ -14,7 +18,7 @@ class RTEntity(object):
 
     @staticmethod
     def api():
-        """returns the objects api"""
+        """Implemented in derived class"""
         raise NotImplementedError
 
 
