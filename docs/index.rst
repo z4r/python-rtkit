@@ -11,7 +11,6 @@ Foo Bar Bash
 .. automodule:: rtkit
    :members:
 
-.. autoclass:: rtkit
        
 Contents:
 
