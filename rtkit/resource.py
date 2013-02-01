@@ -38,6 +38,7 @@ class RTResource(object):
 
 
 class RTResponse(object):
+    """Represents the REST reponse from server"""
     def __init__(self, request, response):
         self.headers = response.headers
         self.body = response.read()
