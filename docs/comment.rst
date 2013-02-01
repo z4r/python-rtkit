@@ -1,5 +1,4 @@
 
-.. include:: sidebar.rst
 
 ====================================
 rtkit.comment

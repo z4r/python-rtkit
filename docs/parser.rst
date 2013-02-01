@@ -1,4 +1,3 @@
-.. include:: sidebar.rst
 
 ====================================
 rtkit.parser
