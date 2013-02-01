@@ -42,7 +42,9 @@ def _pass(section, lineno=0):
 
 
 def check(section):
-    """Parse and Dispatch Errors - See :py:mod:`rtkit.errors`
+    """Parse and Dispatch Errors 
+    
+    .. seealso:: The :py:mod:`rtkit.errors` module
     
     .. doctest::
     

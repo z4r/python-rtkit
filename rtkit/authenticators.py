@@ -1,4 +1,17 @@
+"""Connect to an RT server using various authentication techniques
 
+* The :py:class:`~rtkit.authenticators.AbstractAuthenticator` contains the base methods
+* And the current implementations are:
+    * :py:class:`~rtkit.authenticators.BasicAuthenticator` 
+    * :py:class:`~rtkit.authenticators.CookieAuthenticator` 
+    * :py:class:`~rtkit.authenticators.KerberosAuthenticator`
+
+.. seealso::
+    
+    :py:mod:`rtkit.resource` for usage
+
+
+"""
 import os
 import urllib
 import urllib2
@@ -10,12 +23,20 @@ __all__ = [
     'KerberosAuthenticator',
 ]
 if os.environ.get('__GEN_DOCS__', None):
-    __all__.append("AbstractAuthenticator")
+    __all__.insert(0, "AbstractAuthenticator")
 
+
+    
 class AbstractAuthenticator(object):
     """Abstract Base Authenticator"""
     
     def __init__(self, username, password, url, *handlers):
+        """
+        :param username: The RT Login
+        :param password: Plain Text Password
+        :param url: the url ?
+        :param *handlers: todo
+        """
         self.opener = urllib2.build_opener(*handlers)
         self.username = username
         self.password = password
