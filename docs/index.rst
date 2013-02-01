@@ -21,15 +21,14 @@ Modules
 .. toctree::
    :maxdepth: 2
 
-      
-.. automodule:: rtkit.tracker
-   :members:
 
 
-.. automodule:: rtkit.entities
+
+.. automodule:: rtkit.resource
    :members:
    :undoc-members:
    :inherited-members:
+   :show-inheritance:
 
 
 

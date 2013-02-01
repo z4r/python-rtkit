@@ -18,6 +18,8 @@ class RTEntity(object):
 
 
 class User(RTEntity):
+    """User Object"""
+     
     def __init__(self, id, **kwargs):
         super(User, self).__init__(id)
         self.name = kwargs.get('Name')
@@ -34,11 +36,16 @@ class User(RTEntity):
 
 
 class Queue(RTEntity):
+    """Queue Object"""
     def __init__(self, id, **kwargs):
         super(Queue, self).__init__(id)
+        
         self.name = kwargs.get('Name')
+        """Queue Name"""
+        
         self.description = kwargs.get('Description')
-
+        """Queue Description"""
+        
     def __str__(self):
         return '{s.id}: {s.name}'.format(s=self)
 
@@ -76,7 +83,12 @@ class Ticket(RTEntity):
             'estimated': kwargs.get('TimeEstimated'),
             'left': kwargs.get('TimeLeft'),
         }
-        """Time Deltas"""
+        """Time Deltas dictionary with keys
+        
+           * worked
+           * estimated
+           * left
+        """
         
         self.date = {
             'created': kwargs.get('Created'),
@@ -85,7 +97,14 @@ class Ticket(RTEntity):
             'resolved': kwargs.get('Resolved'),
             'updated': kwargs.get('LastUpdated'),
         }
-        """Dates as dicionary with keys created, started, due, resolved, updated"""
+        """Dates as dicionary with keys
+        
+           * created
+           * started
+           * due
+           * resolved
+           * updated
+        """
         
     def __str__(self):
         return '{s.id}: {s.subject}'.format(s=self)
@@ -130,8 +149,10 @@ class Attachment(RTEntity):
 
 
 class History(RTEntity):
+    """History Object"""
     pass
 
 
 class Links(RTEntity):
+    """Links Object"""
     pass
