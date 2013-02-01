@@ -19,7 +19,7 @@ Contents:
 .. automodule:: rtkit.tracker
    :members:
        
-.. autoclass:: Tracker
+.. autoclass:: rtkit
     :members: 
 
 Indices and tables
