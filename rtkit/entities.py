@@ -1,3 +1,4 @@
+
 __all__ = ['User', 'Queue', 'Ticket', 'Attachment', 'History', 'Links']
 
 
@@ -149,10 +150,16 @@ class Attachment(RTEntity):
 
 
 class History(RTEntity):
-    """History Object"""
+    """History Object
+    
+    .. todo:: `History` not implemented
+    """
     pass
 
 
 class Links(RTEntity):
-    """Links Object"""
+    """Links Object
+    
+    .. todo:: `Links` not implemented
+    """
     pass

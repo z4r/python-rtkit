@@ -32,9 +32,10 @@ from rtkit import __author__ as AUTHOR
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.todo', 
     'sphinx.ext.viewcode','sphinx.ext.autosummary','sphinx.ext.doctest' ]
 autoclass_content = "both"
-autodoc_member_order = "bysource"
+#autodoc_member_order = "alphabetical"
 autodoc_default_flags = ["inherited-members"]
 
+todo_include_todos = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
