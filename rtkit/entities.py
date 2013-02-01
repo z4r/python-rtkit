@@ -13,6 +13,7 @@ class RTEntity(object):
 
     @staticmethod
     def api():
+        """returns the objects api"""
         raise NotImplementedError
 
 
