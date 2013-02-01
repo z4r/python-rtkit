@@ -3,6 +3,7 @@ from entities import *
 
 
 class Tracker(RTResource):
+    """Tracker Object"""
     def __init__(self, url, username, password, auth, language='en'):
         super(Tracker, self).__init__(url, username, password, auth)
         self.user = self.get_user(auth.username)

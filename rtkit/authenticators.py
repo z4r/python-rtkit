@@ -1,3 +1,6 @@
+"""
+.. autoclass:: AbstractAuthenticator
+"""
 import urllib
 import urllib2
 import cookielib
@@ -10,6 +13,7 @@ __all__ = [
 
 
 class AbstractAuthenticator(object):
+    """Core Authenticator"""
     def __init__(self, username, password, url, *handlers):
         self.opener = urllib2.build_opener(*handlers)
         self.username = username
