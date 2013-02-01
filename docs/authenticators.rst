@@ -1,8 +1,10 @@
 
+
+.. include:: sidebar.rst
+
 ====================================
 rtkit.authenticators
 ====================================
-
    
 .. automodule:: rtkit.authenticators
    :members:

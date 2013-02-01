@@ -22,13 +22,24 @@ class Tracker(RTResource):
         return self._get_entity(Ticket, value)
 
     def search_tickets(self, query, order):
-        """.. todo:: Not yes Implemented"""
+        """Search tickets
+        
+           .. warning:: Not yet Implemented
+        """
         raise NotImplementedError
 
     def create_ticket(self, content, attachments=None):
+        """Create a ticket
+        
+           .. warning:: Not yet Implemented
+        """
         raise NotImplementedError
 
     def comment_ticket(self, content, attachments=None):
+        """Comment on Ticket
+        
+           .. warning:: Not yet Implemented
+        """
         raise NotImplementedError
 
     def get_attachment(self, ticket_id, value):
@@ -40,9 +51,14 @@ class Tracker(RTResource):
         return self._get_subentity(Ticket, ticket_id, History, value, format)
 
     def get_links(self, ticket_id):
+        """:return: An instance of :py:class:`rtkit.entities.Links`"""
         return self._get_subentity(Ticket, ticket_id, Links)
 
     def change_links(self, ticket_id, content):
+        """Change Links
+        
+           .. warning:: Not yet Implemented
+        """
         raise NotImplementedError
 
     def _get_entity(self, Entity, value):

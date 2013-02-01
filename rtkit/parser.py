@@ -2,36 +2,42 @@ from itertools import ifilterfalse
 import re
 from rtkit import comment
 
-
 class RTParser(object):
+    
+    """ RFC5322 Parser - see https://tools.ietf.org/html/rfc5322"""
+
     HEADER = re.compile(r'^RT/(?P<v>.+)\s+(?P<s>(?P<i>\d+).+)')
     COMMENT = re.compile(r'^#\s+.+$')
     SECTION = re.compile(r'^--', re.M | re.U)
 
     @classmethod
     def parse(cls, body, decoder):
-        r""" Return a list of RFC5322-like section
-        >>> decode = RTParser.decode
-        >>> body = '''
-        ...
-        ... # c1
-        ... spam: 1
-        ... ham: 2,
-        ...     3
-        ... eggs:'''
-        >>> RTParser.parse(body, decode)
-        [[('spam', '1'), ('ham', '2, 3'), ('eggs', '')]]
-        >>> RTParser.parse('# spam 1 does not exist.', decode)
-        Traceback (most recent call last):
+        """ :returns: A list of RFC5322-like section
+        
+        .. code-block:: python
+        
+            >>> decode = RTParser.decode
+            >>> body = '''
             ...
-        RTNotFoundError: spam 1 does not exist
-        >>> RTParser.parse('# Spam 1 created.', decode)
-        [[('id', 'spam/1')]]
-        >>> RTParser.parse('No matching results.', decode)
-        []
-        >>> decode = RTParser.decode_comment
-        >>> RTParser.parse('# spam: 1\n# ham: 2', decode)
-        [[('spam', '1'), ('ham', '2')]]
+            ... # c1
+            ... spam: 1
+            ... ham: 2,
+            ...     3
+            ... eggs:'''
+            >>> RTParser.parse(body, decode)
+            [[('spam', '1'), ('ham', '2, 3'), ('eggs', '')]]
+            >>> RTParser.parse('# spam 1 does not exist.', decode)
+            Traceback (most recent call last):
+            ...
+            RTNotFoundError: spam 1 does not exist
+            >>> RTParser.parse('# Spam 1 created.', decode)
+            [[('id', 'spam/1')]]
+            >>> RTParser.parse('No matching results.', decode)
+            []
+            >>> decode = RTParser.decode_comment
+            >>> RTParser.parse('# spam: 1\\n# ham: 2', decode)
+            [[('spam', '1'), ('ham', '2')]]
+            
         """
         section = cls.build(body)
         if len(section) == 1:
@@ -45,11 +51,14 @@ class RTParser(object):
 
     @classmethod
     def decode(cls, lines):
-        """ Return a list of 2-tuples parsing 'k: v' and skipping comments
-        >>> RTParser.decode(['# c1: c2', 'spam: 1', 'ham: 2, 3', 'eggs:'])
-        [('spam', '1'), ('ham', '2, 3'), ('eggs', '')]
-        >>> RTParser.decode(['<!DOCTYPE HTML PUBLIC >', '<html><head>',])
-        []
+        """:return: A list of 2-tuples parsing 'k: v' and skipping comments
+        
+        .. code-block:: python
+        
+            >>> RTParser.decode(['# c1: c2', 'spam: 1', 'ham: 2, 3', 'eggs:'])
+            [('spam', '1'), ('ham', '2, 3'), ('eggs', '')]
+            >>> RTParser.decode(['<!DOCTYPE HTML PUBLIC >', '<html><head>',])
+            []
         """
         try:
             lines = ifilterfalse(cls.COMMENT.match, lines)
@@ -59,34 +68,42 @@ class RTParser(object):
 
     @classmethod
     def decode_comment(cls, lines):
-        """ Return a list of 2-tuples parsing '# k: v'
-        >>> RTParser.decode_comment(['# c1: c2', 'spam: 1', 'ham: 2, 3', 'eggs:'])
-        [('c1', 'c2')]
-        >>>
+        """:return: A list of 2-tuples parsing '# k: v'
+        
+            .. code-block:: python
+            
+                >>> RTParser.decode_comment(['# c1: c2', 'spam: 1', 'ham: 2, 3', 'eggs:'])
+                [('c1', 'c2')]
+                >>>
         """
         lines = filter(cls.COMMENT.match, lines)
         return [(k.strip('# '), v.strip(' ')) for k, v in [l.split(':', 1) for l in lines]]
 
     @classmethod
     def build(cls, body):
-        """ Build logical lines from a RFC5322-like string
-        >>> body = '''RT/1.2.3 200 Ok
-        ...
-        ... # a
-        ...   b
-        ... spam: 1
-        ...
-        ... ham: 2,
-        ...     3
-        ... --
-        ... # c
-        ... spam: 4
-        ... ham:
-        ... --
-        ... a -- b
-        ... '''
-        >>> RTParser.build(body)
-        [['# a b', 'spam: 1', 'ham: 2, 3'], ['# c', 'spam: 4', 'ham:'], ['a -- b']]
+        """Build logical lines from a RFC5322-like string
+        
+           :returns: A list of strings
+        
+            .. code-block:: python
+            
+                >>> body = '''RT/1.2.3 200 Ok
+                ...
+                ... # a
+                ...   b
+                ... spam: 1
+                ...
+                ... ham: 2,
+                ...     3
+                ... --
+                ... # c
+                ... spam: 4
+                ... ham:
+                ... --
+                ... a -- b
+                ... '''
+                >>> RTParser.build(body)
+                [['# a b', 'spam: 1', 'ham: 2, 3'], ['# c', 'spam: 4', 'ham:'], ['a -- b']]
         """
         def build_section(section):
             logic_lines = []
