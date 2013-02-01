@@ -41,8 +41,10 @@ class RTResource(object):
         return self.response_cls(req, response)
 
 
+        
 class RTResponse(object):
     """Represents the REST response from server"""
+    
     def __init__(self, request, response):
         
         self.headers = response.headers
@@ -72,6 +74,9 @@ class RTResponse(object):
             self.status = self.body
             self.status_int = 500
         self.logger.debug('%r' % self.body)
+        
+        self.parsed = None
+        """A List of Tuples of parsed data"""
         try:
             decoder = RTParser.decode
             if self.status_int == 409:

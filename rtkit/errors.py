@@ -9,7 +9,8 @@ __all__ = [
 
 
 class RTResourceError(Exception):
-    """ default error class """
+    """Default error class """
+    
     status_int = None
 
     def __init__(self, msg=None, http_code=None, response=None):
@@ -37,20 +38,25 @@ class RTResourceError(Exception):
 
 
 class RTNotFoundError(RTResourceError):
+    """Not Found Exception"""
     status_int = 404
 
 
 class RTUnknownTypeError(RTResourceError):
+    """Unknown Type Exception"""
     status_int = 400
 
 
 class RTInvalidError(RTResourceError):
+    """Invalid Exception"""
     status_int = 400
 
 
 class RTValueError(RTResourceError):
+    """value Error Exception"""
     status_int = 400
 
 
 class RTUnauthorized(RTResourceError):
+    """Not Authorised Exception"""
     status_int = 401

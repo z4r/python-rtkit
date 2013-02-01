@@ -3,11 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-python-rtkit
-========================================
 
 ============================
-README
+Introduction
 ============================
 .. toctree::
    :maxdepth: 2
@@ -17,21 +15,25 @@ README
 ============================
 Modules
 ============================
-   
 .. toctree::
-   :maxdepth: 2
+   
+  authenticators
+  comment
+  entities
+  errors
+  forms
+  parser
+  resource
+  tracker
 
-
-
-
-.. automodule:: rtkit.resource
+============================
+Credits
+============================
+   
+.. automodule:: rtkit
    :members:
-   :undoc-members:
-   :inherited-members:
-   :show-inheritance:
-
-
-
+   
+     
     
 Indices and tables
 ==================

@@ -66,3 +66,4 @@ def set_logging(level, handler=None):
     logger = logging.getLogger(__name__)
     logger.setLevel(LOG_LEVELS.get(level, logging.INFO))
     logger.addHandler(handler)
+

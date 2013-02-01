@@ -1,6 +1,4 @@
-"""
-.. autoclass:: AbstractAuthenticator
-"""
+
 import urllib
 import urllib2
 import cookielib
@@ -13,7 +11,8 @@ __all__ = [
 
 
 class AbstractAuthenticator(object):
-    """Core Authenticator"""
+    """Abstract Authenticator"""
+    
     def __init__(self, username, password, url, *handlers):
         self.opener = urllib2.build_opener(*handlers)
         self.username = username
@@ -22,6 +21,7 @@ class AbstractAuthenticator(object):
         self._logged = True
 
     def login(self):
+        """Login to server, unless already logged in"""
         if self._logged:
             return
         self._login()
@@ -31,11 +31,28 @@ class AbstractAuthenticator(object):
         raise NotImplementedError
 
     def open(self, request):
+        """Open connection to server"""
         self.login()
         return self.opener.open(request)
 
 
 class BasicAuthenticator(AbstractAuthenticator):
+    """Basic Authenticator
+    
+        .. code-block:: python
+        
+            from rtkit.resource import RTResource
+            from rtkit.authenticators import BasicAuthenticator
+            from rtkit.errors import RTResourceError
+
+            from rtkit import set_logging
+            import logging
+            set_logging('debug')
+            logger = logging.getLogger('rtkit')
+
+            resource = RTResource('http://<HOST>/REST/1.0/', '<USER>', '<PWD>', BasicAuthenticator)
+    """
+    
     def __init__(self, username, password, url):
         passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
         passman.add_password(None, url, username, password)
@@ -46,6 +63,23 @@ class BasicAuthenticator(AbstractAuthenticator):
 
 
 class CookieAuthenticator(AbstractAuthenticator):
+    """Authenticate against server using a cookie
+        
+        .. code-block:: python
+        
+            from rtkit.resource import RTResource
+            from rtkit.authenticators import CookieAuthenticator
+            from rtkit.errors import RTResourceError
+
+            from rtkit import set_logging
+            import logging
+            set_logging('debug')
+            logger = logging.getLogger('rtkit')
+
+            resource = RTResource('http://<HOST>/REST/1.0/', '<USER>', '<PWD>', CookieAuthenticator)
+    """
+    
+    
     def __init__(self, username, password, url):
         super(CookieAuthenticator, self).__init__(
             username, password, url,
@@ -61,6 +95,22 @@ class CookieAuthenticator(AbstractAuthenticator):
 
 
 class KerberosAuthenticator(AbstractAuthenticator):
+    """Authenticate using Kerberos
+            
+        .. code-block:: python
+        
+            from rtkit.resource import RTResource
+            from rtkit.authenticators import KerberosAuthenticator
+            from rtkit.errors import RTResourceError
+
+            from rtkit import set_logging
+            import logging
+            set_logging('debug')
+            logger = logging.getLogger('rtkit')
+
+            resource = RTResource(url, None, None, KerberosAuthenticator)
+    """
+    
     def __init__(self, username, password, url):
         try:
             from urllib2_kerberos import HTTPKerberosAuthHandler

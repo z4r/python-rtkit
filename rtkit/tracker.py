@@ -10,15 +10,19 @@ class Tracker(RTResource):
         self.language = self.user.language or language
 
     def get_user(self, value):
+        """:return: An instance of :py:class:`rtkit.entities.User`"""
         return self._get_entity(User, value)
 
     def get_queue(self, value):
+        """:return: An instance of :py:class:`rtkit.entities.Queue`"""
         return self._get_entity(Queue, value)
 
     def get_ticket(self, value):
+        """:return: An instance of :py:class:`rtkit.entities.Ticket`"""
         return self._get_entity(Ticket, value)
 
     def search_tickets(self, query, order):
+        """.. todo:: Not yes Implemented"""
         raise NotImplementedError
 
     def create_ticket(self, content, attachments=None):
@@ -28,9 +32,11 @@ class Tracker(RTResource):
         raise NotImplementedError
 
     def get_attachment(self, ticket_id, value):
+        """:return: An instance of :py:class:`rtkit.entities.Attachment`"""
         return self._get_subentity(Ticket, ticket_id, Attachment, value)
 
     def get_history(self, ticket_id, value=None, format='l'):
+        """:return: An instance of :py:class:`rtkit.entities.History`"""
         return self._get_subentity(Ticket, ticket_id, History, value, format)
 
     def get_links(self, ticket_id):
