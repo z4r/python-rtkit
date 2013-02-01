@@ -14,7 +14,7 @@ class RTParser(object):
     def parse(cls, body, decoder):
         """ :returns: A list of RFC5322-like section
         
-        .. code-block:: python
+        .. doctest::
         
             >>> decode = RTParser.decode
             >>> body = '''
@@ -53,7 +53,7 @@ class RTParser(object):
     def decode(cls, lines):
         """:return: A list of 2-tuples parsing 'k: v' and skipping comments
         
-        .. code-block:: python
+        .. doctest::
         
             >>> RTParser.decode(['# c1: c2', 'spam: 1', 'ham: 2, 3', 'eggs:'])
             [('spam', '1'), ('ham', '2, 3'), ('eggs', '')]
@@ -70,11 +70,11 @@ class RTParser(object):
     def decode_comment(cls, lines):
         """:return: A list of 2-tuples parsing '# k: v'
         
-            .. code-block:: python
+        .. doctest::
             
-                >>> RTParser.decode_comment(['# c1: c2', 'spam: 1', 'ham: 2, 3', 'eggs:'])
-                [('c1', 'c2')]
-                >>>
+            >>> RTParser.decode_comment(['# c1: c2', 'spam: 1', 'ham: 2, 3', 'eggs:'])
+            [('c1', 'c2')]
+            >>>
         """
         lines = filter(cls.COMMENT.match, lines)
         return [(k.strip('# '), v.strip(' ')) for k, v in [l.split(':', 1) for l in lines]]
@@ -83,27 +83,27 @@ class RTParser(object):
     def build(cls, body):
         """Build logical lines from a RFC5322-like string
         
-           :returns: A list of strings
+        :returns: A list of strings
+        .. doctest::
         
-            .. code-block:: python
             
-                >>> body = '''RT/1.2.3 200 Ok
-                ...
-                ... # a
-                ...   b
-                ... spam: 1
-                ...
-                ... ham: 2,
-                ...     3
-                ... --
-                ... # c
-                ... spam: 4
-                ... ham:
-                ... --
-                ... a -- b
-                ... '''
-                >>> RTParser.build(body)
-                [['# a b', 'spam: 1', 'ham: 2, 3'], ['# c', 'spam: 4', 'ham:'], ['a -- b']]
+            >>> body = '''RT/1.2.3 200 Ok
+            ...
+            ... # a
+            ...   b
+            ... spam: 1
+            ...
+            ... ham: 2,
+            ...     3
+            ... --
+            ... # c
+            ... spam: 4
+            ... ham:
+            ... --
+            ... a -- b
+            ... '''
+            >>> RTParser.build(body)
+            [['# a b', 'spam: 1', 'ham: 2, 3'], ['# c', 'spam: 4', 'ham:'], ['a -- b']]
         """
         def build_section(section):
             logic_lines = []

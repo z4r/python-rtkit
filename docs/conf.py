@@ -29,7 +29,8 @@ from rtkit import __author__ as AUTHOR
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.todo', 'sphinx.ext.viewcode','sphinx.ext.autosummary']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.todo', 
+    'sphinx.ext.viewcode','sphinx.ext.autosummary','sphinx.ext.doctest' ]
 autoclass_content = "both"
 autodoc_member_order = "bysource"
 autodoc_default_flags = ["inherited-members"]
@@ -192,7 +193,7 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'python-rtkit.tex', u'python-rtkit Documentation',
-   u'Pedro Morgan', 'manual'),
+   AUTHOR, 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -236,7 +237,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'python-rtkit', u'python-rtkit Documentation',
-   u'Pedro Morgan', 'python-rtkit', 'One line description of project.',
+   AUTHOR, 'python-rtkit', 'One line description of project.',
    'Miscellaneous'),
 ]
 

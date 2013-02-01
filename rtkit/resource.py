@@ -76,7 +76,7 @@ class RTResponse(object):
         self.logger.debug('%r' % self.body)
         
         self.parsed = None
-        """A List of Tuples of parsed data"""
+        """A List of Tuples of  data"""
         try:
             decoder = RTParser.decode
             if self.status_int == 409:
