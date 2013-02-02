@@ -4,21 +4,23 @@ import os
 __all__ = ['User', 'Queue', 'Ticket', 'Attachment', 'History', 'Links']
 
 if os.environ.get('__GEN_DOCS__', None):
-    __all__.append("RTEntity")
+    __all__.insert(0, "RTEntity")
+
 
 class RTEntity(object):
-    """Base Object"""
+    """Base Class for an Entity"""
      
     def __init__(self, id):
         self._id = id
 
     @property
     def id(self):
+        """:return: int with the ID"""
         return int(self._id.split('/')[1])
 
     @staticmethod
     def api():
-        """Implemented in derived class"""
+        """:return: NotImplementedError - needs to be implemented in subclass"""
         raise NotImplementedError
 
 
@@ -37,6 +39,7 @@ class User(RTEntity):
 
     @staticmethod
     def api():
+        """:return: str with 'user'"""
         return 'user'
 
 
@@ -56,6 +59,7 @@ class Queue(RTEntity):
 
     @staticmethod
     def api():
+        """:return: str with 'queue'"""
         return 'queue'
 
 
@@ -116,6 +120,7 @@ class Ticket(RTEntity):
 
     @staticmethod
     def api():
+        """:return: str with 'ticket'"""
         return 'ticket'
 
 
@@ -150,6 +155,7 @@ class Attachment(RTEntity):
 
     @staticmethod
     def api():
+        """:return: str with 'attachments'"""
         return 'attachments'
 
 

@@ -40,10 +40,7 @@ rtkit
   resource
   tracker
   links
-============================
-TODO
-============================
-.. todolist::
+  developers
       
 ============================
 Credits

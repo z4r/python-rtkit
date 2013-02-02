@@ -1,15 +1,21 @@
 ===================
 Externals
 ===================
+
+    .. todo:: Make this into and include TOC or something
     
-    * Best Practical RT (Request Tracker) 
+    * RT (Request Tracker) home page at Best Practical 
+    
       http://bestpractical.com/rt/
        
     * RT REST API Summary
-      http://bestpractical.com/rt/
+    
+      http://requesttracker.wikia.com/wiki/REST
       
-    * rtkit Source Code
+    * rtkit - This projects Source Code
+    
       https://github.com/z4r/python-rtkit
 
-    * rtkit Latest Docs
+    * rtkit Latest Docs (currently a daffodil fork)
+    
       https://python-rtkit.readthedocs.org/
