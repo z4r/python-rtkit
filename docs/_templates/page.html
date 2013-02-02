@@ -1,0 +1,26 @@
+{% extends "!page.html" %}
+ {%- block document %}
+      <style>
+      .admonition-todo{
+          background-color: #EBE2F2;
+      }
+      </style>
+      <div class="documentwrapper">
+      {%- if render_sidebar %}
+        <div class="bodywrapper">
+      {%- endif %}
+
+          <div class="body" >
+             <div style="background-color: #dddddd; float: right; width: 200px; font-size: 10pt;">
+                          {{toctree() }}
+            </div>
+            <div style="margin-right: 220px;">
+            {% block body %}{{ super() }} {% endblock %}
+            </div>
+          </div>
+          
+      {%- if render_sidebar %}
+        </div>
+      {%- endif %}
+      </div>
+  {%- endblock %}

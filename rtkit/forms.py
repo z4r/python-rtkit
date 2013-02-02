@@ -8,6 +8,7 @@ BOUNDARY = 'xXXxXXyYYzzz'
 
 
 class MultipartForm(object):
+    """Represents an encoded Form"""
     def __init__(self, params, boundary):
         self.boundary = boundary
         self.tboundary = "--%s--%s" % (boundary, CRLF)
@@ -78,7 +79,7 @@ class BoundaryItem(object):
         self._encoded_bdr = None
 
     def encode_hdr(self, boundary):
-        """Returns the header of the encoding of this parameter"""
+        """:return: The header of the encoding of this parameter"""
         if not self._encoded_hdr or self._encoded_bdr != boundary:
             boundary = url_quote(boundary)
             self._encoded_bdr = boundary
@@ -103,7 +104,7 @@ class BoundaryItem(object):
         return self._encoded_hdr
 
     def encode(self, boundary):
-        """ Returns the string encoding of this parameter. """
+        """ :returns: A string encoding of this parameter. """
         value = self.value
         if re.search("^--%s$" % re.escape(boundary), value, re.M):
             raise ValueError("boundary found in encoded string")

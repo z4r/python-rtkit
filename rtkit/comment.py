@@ -22,12 +22,14 @@ UNAUTHORIZED = re.compile(UNAUTHORIZED_PATTERN)
 
 
 class RTCreated(Exception):
+    """Created Exception"""
     def __init__(self, msg):
         m = CREATED.match(msg)
         self.id = '{0}/{1}'.format(m.group('t').lower(), m.group('r'))
 
 
 class RTNoMatch(Exception):
+    """No Match Exception"""
     pass
 
 
@@ -40,44 +42,49 @@ def _pass(section, lineno=0):
 
 
 def check(section):
-    """Parse and Dispatch RT errors
-    >>> check(['# Unknown object type: spam'])
-    Traceback (most recent call last):
-            ...
-    RTUnknownTypeError: Unknown object type: spam
-    >>> check(["# Invalid object specification: 'spam'"])
-    Traceback (most recent call last):
-            ...
-    RTInvalidError: Invalid object specification: 'spam'
-    >>> check(['# spam 1 does not exist.'])
-    Traceback (most recent call last):
-            ...
-    RTNotFoundError: spam 1 does not exist
-    >>> check(['# No spam named ham exists.'])
-    Traceback (most recent call last):
-            ...
-    RTNotFoundError: No spam named ham exists
-    >>> check(['# Objects of type eggs must be specified by numeric id.'])
-    Traceback (most recent call last):
-            ...
-    RTValueError: Objects of type eggs must be specified by numeric id
-    >>> check(['No matching results.'])
-    Traceback (most recent call last):
-            ...
-    RTNoMatch: No matching results
-    >>> check(['# Could not create ticket.', '# Could not create ticket. Queue not set'])
-    Traceback (most recent call last):
-            ...
-    RTInvalidError: Could not create ticket. Queue not set
-    >>> try:
-    ...     check(['# Ticket 1 created.'])
-    ... except RTCreated as e:
-    ...     e.id
-    'ticket/1'
-    >>> check(['# You are not allowed to modify ticket 2.'])
-    Traceback (most recent call last):
-            ...
-    RTUnauthorized: You are not allowed to modify ticket 2
+    """Parse and Dispatch Errors 
+    
+    .. seealso:: The :py:mod:`rtkit.errors` module
+    
+    .. doctest::
+    
+        >>> check(['# Unknown object type: spam'])
+        Traceback (most recent call last):
+                ...
+        RTUnknownTypeError: Unknown object type: spam
+        >>> check(["# Invalid object specification: 'spam'"])
+        Traceback (most recent call last):
+                ...
+        RTInvalidError: Invalid object specification: 'spam'
+        >>> check(['# spam 1 does not exist.'])
+        Traceback (most recent call last):
+                ...
+        RTNotFoundError: spam 1 does not exist
+        >>> check(['# No spam named ham exists.'])
+        Traceback (most recent call last):
+                ...
+        RTNotFoundError: No spam named ham exists
+        >>> check(['# Objects of type eggs must be specified by numeric id.'])
+        Traceback (most recent call last):
+                ...
+        RTValueError: Objects of type eggs must be specified by numeric id
+        >>> check(['No matching results.'])
+        Traceback (most recent call last):
+                ...
+        RTNoMatch: No matching results
+        >>> check(['# Could not create ticket.', '# Could not create ticket. Queue not set'])
+        Traceback (most recent call last):
+                ...
+        RTInvalidError: Could not create ticket. Queue not set
+        >>> try:
+        ...     check(['# Ticket 1 created.'])
+        ... except RTCreated as e:
+        ...     e.id
+        'ticket/1'
+        >>> check(['# You are not allowed to modify ticket 2.'])
+        Traceback (most recent call last):
+                ...
+        RTUnauthorized: You are not allowed to modify ticket 2
     """
     def _incheck(section, e):
         m = e[0].match(section[0])

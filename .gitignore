@@ -8,3 +8,4 @@ dist/
 ENV
 venv
 .cache
+docs/_build/
