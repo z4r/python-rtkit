@@ -2,10 +2,12 @@
 Developers Guide
 ======================================
 
-This project is pretty new but its a tool
-for connecting to a RT instance.
+Once upon a time, z4r created a pushed some code to github;
+little did he know what was to happen next, when the fork.. .. developers guide to be written.. continued.....
 
 
-TODO
-============================
+TODO List 
+===================================
+(extracted from source)
+
 .. todolist::

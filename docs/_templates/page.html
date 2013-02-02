@@ -4,17 +4,42 @@
       .admonition-todo{
           background-color: #EBE2F2;
       }
+      .rtkit {
+          font-size: 8pt;
+          }
+          .rtkitd ul{
+              padding-left: 25px;
+              }
       </style>
       <div class="documentwrapper">
       {%- if render_sidebar %}
         <div class="bodywrapper">
       {%- endif %}
 
-          <div class="body" >
-             <div style="background-color: #dddddd; float: right; width: 200px; font-size: 10pt;">
+          <div class="body" style="padding-right: 0;">
+             <div style="background-color: #dddddd; float: right; width: 250px; font-size: 9pt;" class="rtkitd">
+   
                           {{toctree() }}
+                          <h4>Links</h4>
+                          <ul>
+                            <li>Request Tracker (RT) Home<br>
+                                <a class="rtkit"  target="_blank"  href="http://bestpractical.com/rt/">bestpractical.com/rt/</a>
+                            </li>
+                            <li>RT REST API <br>
+                                <a class="rtkit"  target="_blank"  href="http://requesttracker.wikia.com/wiki/REST">requesttracker.wikia.com/wiki/REST</a>
+                                <br>
+                                Or shorter <a class="rtkit"  href="README.html#rt-rest-api-summary">Local Summary</a>
+                            </li>
+                            <li>rtkit Source Code<br>
+                                <a class="rtkit" target="_blank" href="https://github.com/z4r/python-rtkit">github.com/z4r/python-rtkit</a>
+                            </li>
+                            <li>rtkit Latest Docs<br>
+                                <a class="rtkit"  target="_blank" href="https://python-rtkit.readthedocs.org/">python-rtkit.readthedocs.org/</a>
+                            </li>
+                           </ul>
+                          
             </div>
-            <div style="margin-right: 220px;">
+            <div style="margin-right: 260px;">
             {% block body %}{{ super() }} {% endblock %}
             </div>
           </div>
