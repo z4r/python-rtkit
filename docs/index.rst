@@ -27,7 +27,7 @@ Introduction
    README
        
 ============================
-Modules
+rtkit 
 ============================
 .. toctree::
    
@@ -39,7 +39,7 @@ Modules
   parser
   resource
   tracker
-
+  links
 ============================
 TODO
 ============================
