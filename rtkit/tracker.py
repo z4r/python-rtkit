@@ -23,21 +23,21 @@ class Tracker(RTResource):
 
     def search_tickets(self, query, order):
         """Search tickets
-        
+
            .. warning:: Not yet Implemented
         """
         raise NotImplementedError
 
     def create_ticket(self, content, attachments=None):
         """Create a ticket
-        
+
            .. warning:: Not yet Implemented
         """
         raise NotImplementedError
 
     def comment_ticket(self, content, attachments=None):
         """Comment on Ticket
-        
+
            .. warning:: Not yet Implemented
         """
         raise NotImplementedError
@@ -56,7 +56,7 @@ class Tracker(RTResource):
 
     def change_links(self, ticket_id, content):
         """Change Links
-        
+
            .. warning:: Not yet Implemented
         """
         raise NotImplementedError

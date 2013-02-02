@@ -1,5 +1,5 @@
 __author__ = 'Andrea De Marco <24erre@gmail.com>'
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 __classifiers__ = [
     'Development Status :: 4 - Beta',
     'Intended Audience :: Developers',
@@ -66,4 +66,3 @@ def set_logging(level, handler=None):
     logger = logging.getLogger(__name__)
     logger.setLevel(LOG_LEVELS.get(level, logging.INFO))
     logger.addHandler(handler)
-

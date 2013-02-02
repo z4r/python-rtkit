@@ -7,15 +7,13 @@ from rtkit.parser import RTParser
 
 class RTResource(object):
     """REST Resource Object"""
-    
     def __init__(self, url, username, password, auth, **kwargs):
         """Create Connection Object
-        
+
         :param url: Server URL
         :param username: RT Login
         :param password: Password
         :param auth: Instance of :py:mod:`rtkit.authenticators`
-        
         """
         self.auth = auth(username, password, url)
         self.response_cls = kwargs.get('response_class', RTResponse)
@@ -50,27 +48,24 @@ class RTResource(object):
         return self.response_cls(req, response)
 
 
-        
 class RTResponse(object):
     """Represents the REST response from server"""
-    
     def __init__(self, request, response):
-        
         self.headers = response.headers
         """Headers as dict"""
-        
+
         self.body = response.read()
         """Request Body"""
-        
+
         self.status_int = response.code
         """Status Code"""
-        
+
         self.status = '{0} {1}'.format(response.code, response.msg)
         """Status String"""
-        
+
         self.logger = logging.getLogger('rtkit')
         """Logger"""
-        
+
         self.logger.info(request.get_method())
         self.logger.info(request.get_full_url())
         self.logger.debug('HTTP_STATUS: {0}'.format(self.status))
@@ -83,7 +78,7 @@ class RTResponse(object):
             self.status = self.body
             self.status_int = 500
         self.logger.debug('%r' % self.body)
-        
+
         self.parsed = None
         """A List of Tuples of  data"""
         try:
