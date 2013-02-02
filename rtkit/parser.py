@@ -2,8 +2,8 @@ from itertools import ifilterfalse
 import re
 from rtkit import comment
 
+
 class RTParser(object):
-    
     """ RFC5322 Parser - see https://tools.ietf.org/html/rfc5322"""
 
     HEADER = re.compile(r'^RT/(?P<v>.+)\s+(?P<s>(?P<i>\d+).+)')
@@ -13,9 +13,9 @@ class RTParser(object):
     @classmethod
     def parse(cls, body, decoder):
         """ :returns: A list of RFC5322-like section
-        
+
         .. doctest::
-        
+
             >>> decode = RTParser.decode
             >>> body = '''
             ...
@@ -37,7 +37,6 @@ class RTParser(object):
             >>> decode = RTParser.decode_comment
             >>> RTParser.parse('# spam: 1\\n# ham: 2', decode)
             [[('spam', '1'), ('ham', '2')]]
-            
         """
         section = cls.build(body)
         if len(section) == 1:
@@ -52,9 +51,9 @@ class RTParser(object):
     @classmethod
     def decode(cls, lines):
         """:return: A list of 2-tuples parsing 'k: v' and skipping comments
-        
+
         .. doctest::
-        
+
             >>> RTParser.decode(['# c1: c2', 'spam: 1', 'ham: 2, 3', 'eggs:'])
             [('spam', '1'), ('ham', '2, 3'), ('eggs', '')]
             >>> RTParser.decode(['<!DOCTYPE HTML PUBLIC >', '<html><head>',])
@@ -69,9 +68,9 @@ class RTParser(object):
     @classmethod
     def decode_comment(cls, lines):
         """:return: A list of 2-tuples parsing '# k: v'
-        
+
         .. doctest::
-            
+
             >>> RTParser.decode_comment(['# c1: c2', 'spam: 1', 'ham: 2, 3', 'eggs:'])
             [('c1', 'c2')]
             >>>
@@ -82,11 +81,10 @@ class RTParser(object):
     @classmethod
     def build(cls, body):
         """Build logical lines from a RFC5322-like string
-        
+
         :returns: A list of strings
         .. doctest::
-        
-            
+
             >>> body = '''RT/1.2.3 200 Ok
             ...
             ... # a

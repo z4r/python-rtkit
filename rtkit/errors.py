@@ -10,7 +10,6 @@ __all__ = [
 
 class RTResourceError(Exception):
     """Default error class """
-    
     status_int = None
 
     def __init__(self, msg=None, http_code=None, response=None):

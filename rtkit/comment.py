@@ -42,12 +42,12 @@ def _pass(section, lineno=0):
 
 
 def check(section):
-    """Parse and Dispatch Errors 
-    
+    """Parse and Dispatch Errors
+
     .. seealso:: The :py:mod:`rtkit.errors` module
-    
+
     .. doctest::
-    
+
         >>> check(['# Unknown object type: spam'])
         Traceback (most recent call last):
                 ...
