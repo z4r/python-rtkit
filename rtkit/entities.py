@@ -6,7 +6,6 @@ if os.environ.get('__GEN_DOCS__', None):
     __all__.insert(0, "RTEntity")
 
 
-
 class RTEntity(object):
     """Base Class for an Entity"""
     def __init__(self, id):
