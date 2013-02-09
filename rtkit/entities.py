@@ -1,4 +1,5 @@
 import os
+import re
 
 __all__ = ['User', 'Queue', 'Ticket', 'Attachment', 'History', 'Links']
 
@@ -69,6 +70,7 @@ class Queue(RTEntity):
         """:return: str with 'queue'"""
         return 'queue'
 
+cf_matcher = re.compile("^CF.\{(?P<name>[^}]*)\}$")
 
 class Ticket(RTEntity):
     """Ticket Object"""
@@ -120,6 +122,12 @@ class Ticket(RTEntity):
            * resolved
            * updated
         """
+
+        self.cf = {}
+        for k, v in kwargs.items():
+            matcher = cf_matcher.match(k)
+            if matcher:
+                self.cf[matcher.group('name')] = v
 
     def __str__(self):
         return '{s.id}: {s.subject}'.format(s=self)
