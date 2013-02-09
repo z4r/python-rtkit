@@ -1,8 +1,9 @@
-from rtkit.resource import RTResource
-from entities import *
-
 import urllib
 import urllib2
+from rtkit.resource import RTResource
+from rtkit.entities import *
+
+
 
 class Tracker(RTResource):
     """Tracker Object"""
