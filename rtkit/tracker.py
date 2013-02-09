@@ -1,12 +1,14 @@
 from rtkit.resource import RTResource
 from entities import *
 
+import urllib
+import urllib2
 
 class Tracker(RTResource):
     """Tracker Object"""
     def __init__(self, url, username, password, auth, language='en'):
         super(Tracker, self).__init__(url, username, password, auth)
-        self.user = self.get_user(auth.username)
+        self.user = self.get_user(self.auth.username)
         self.language = self.user.language or language
 
     def get_user(self, value):
@@ -26,7 +28,15 @@ class Tracker(RTResource):
 
            .. warning:: Not yet Implemented
         """
-        raise NotImplementedError
+        content = {'query': query, 'format': 'l'}
+        req = urllib2.Request(
+            url=self.auth.url + 'search/ticket',
+            data=urllib.urlencode(content),
+        )
+        response = self.response_cls(req, self.auth.open(req))
+        #response = self.post('search/ticket', {'content':content})
+        tickets = [Ticket(tracker=self, **dict(d)) for d in response.parsed]
+        return tickets
 
     def create_ticket(self, content, attachments=None):
         """Create a ticket
@@ -63,11 +73,11 @@ class Tracker(RTResource):
 
     def _get_entity(self, Entity, value):
         r = self.get(path='{0}/{1}'.format(Entity.api(), value))
-        return Entity(**dict(r.parsed[0]))
+        return Entity(tracker=self, **dict(r.parsed[0]))
 
     def _get_subentity(self, Entity, e_value, SubEntity, s_value, format=None):
         path = '{0}/{1}/{2}/{3}'.format(Entity.api(), e_value, SubEntity.api(), s_value)
         if format:
             path += '?{0}'.format(format)
         r = self.get(path=path)
-        return SubEntity(**dict(r.parsed[0]))
+        return SubEntity(tracker=self, **dict(r.parsed[0]))

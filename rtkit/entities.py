@@ -1,4 +1,5 @@
 import os
+import re
 
 __all__ = ['User', 'Queue', 'Ticket', 'Attachment', 'History', 'Links']
 
@@ -8,8 +9,9 @@ if os.environ.get('__GEN_DOCS__', None):
 
 class RTEntity(object):
     """Base Class for an Entity"""
-    def __init__(self, id):
+    def __init__(self, id, tracker):
         self._id = id
+        self.tracker = tracker
 
     @property
     def id(self):
@@ -24,8 +26,8 @@ class RTEntity(object):
 
 class User(RTEntity):
     """User Object"""
-    def __init__(self, id, **kwargs):
-        super(User, self).__init__(id)
+    def __init__(self, id, tracker, **kwargs):
+        super(User, self).__init__(id, tracker)
         self.name = kwargs.get('Name')
         self.mail = kwargs.get('EmailAddress')
         self.realname = kwargs.get('RealName')
@@ -42,8 +44,8 @@ class User(RTEntity):
 
 class Queue(RTEntity):
     """Queue Object"""
-    def __init__(self, id, **kwargs):
-        super(Queue, self).__init__(id)
+    def __init__(self, id, tracker, **kwargs):
+        super(Queue, self).__init__(id, tracker)
 
         self.name = kwargs.get('Name')
         """Queue Name"""
@@ -54,16 +56,26 @@ class Queue(RTEntity):
     def __str__(self):
         return '{s.id}: {s.name}'.format(s=self)
 
+    def search_tickets(self, query="", active=True, order='id', ):
+        final_query = "Queue = '%s'" % (self.name, )
+        if query:
+            final_query = "%s and %s" % (final_query, query, )
+        if active:
+            final_query = "%s and (Status = 'new' or Status = 'open' or Status = 'stalled')" % (final_query, )
+        return self.tracker.search_tickets(query=final_query, order=order)
+
+
     @staticmethod
     def api():
         """:return: str with 'queue'"""
         return 'queue'
 
+cf_matcher = re.compile("^CF.\{(?P<name>[^}]*)\}$")
 
 class Ticket(RTEntity):
     """Ticket Object"""
-    def __init__(self, id, **kwargs):
-        super(Ticket, self).__init__(id)
+    def __init__(self, id, tracker, **kwargs):
+        super(Ticket, self).__init__(id, tracker)
 
         self.subject = kwargs.get('Subject')
         """Subject"""
@@ -73,6 +85,9 @@ class Ticket(RTEntity):
 
         self.owner = kwargs.get('Owner')
         """Owner"""
+
+        self.requestors = kwargs.get('Requestors')
+        """Requestors"""
 
         self.creator = kwargs.get('Creator')
         """Creator"""
@@ -111,6 +126,12 @@ class Ticket(RTEntity):
            * updated
         """
 
+        self.cf = {}
+        for k, v in kwargs.items():
+            matcher = cf_matcher.match(k)
+            if matcher:
+                self.cf[matcher.group('name')] = v
+
     def __str__(self):
         return '{s.id}: {s.subject}'.format(s=self)
 
@@ -123,8 +144,8 @@ class Ticket(RTEntity):
 class Attachment(RTEntity):
     """Attachment Object
     """
-    def __init__(self, id, **kwargs):
-        super(Attachment, self).__init__(id)
+    def __init__(self, id, tracker, **kwargs):
+        super(Attachment, self).__init__(id, tracker)
 
         self.filename = kwargs.get('Filename')
         """Filename"""
