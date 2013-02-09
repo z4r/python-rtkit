@@ -64,13 +64,13 @@ class Queue(RTEntity):
             final_query = "%s and (Status = 'new' or Status = 'open' or Status = 'stalled')" % (final_query, )
         return self.tracker.search_tickets(query=final_query, order=order)
 
-
     @staticmethod
     def api():
         """:return: str with 'queue'"""
         return 'queue'
 
 cf_matcher = re.compile("^CF.\{(?P<name>[^}]*)\}$")
+
 
 class Ticket(RTEntity):
     """Ticket Object"""
