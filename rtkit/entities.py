@@ -8,8 +8,9 @@ if os.environ.get('__GEN_DOCS__', None):
 
 class RTEntity(object):
     """Base Class for an Entity"""
-    def __init__(self, id):
+    def __init__(self, id, tracker):
         self._id = id
+        self.tracker = tracker
 
     @property
     def id(self):
@@ -24,8 +25,8 @@ class RTEntity(object):
 
 class User(RTEntity):
     """User Object"""
-    def __init__(self, id, **kwargs):
-        super(User, self).__init__(id)
+    def __init__(self, id, tracker, **kwargs):
+        super(User, self).__init__(id, tracker)
         self.name = kwargs.get('Name')
         self.mail = kwargs.get('EmailAddress')
         self.realname = kwargs.get('RealName')
@@ -42,8 +43,8 @@ class User(RTEntity):
 
 class Queue(RTEntity):
     """Queue Object"""
-    def __init__(self, id, **kwargs):
-        super(Queue, self).__init__(id)
+    def __init__(self, id, tracker, **kwargs):
+        super(Queue, self).__init__(id, tracker)
 
         self.name = kwargs.get('Name')
         """Queue Name"""
@@ -54,6 +55,15 @@ class Queue(RTEntity):
     def __str__(self):
         return '{s.id}: {s.name}'.format(s=self)
 
+    def search_tickets(self, query="", active=True, order='id', ):
+        final_query = "Queue = '%s'" % (self.name, )
+        if query:
+            final_query = "%s and %s" % (final_query, query, )
+        if active:
+            final_query = "%s and (Status = 'new' or Status = 'open' or Status = 'stalled')" % (final_query, )
+        return self.tracker.search_tickets(query=final_query, order=order)
+
+
     @staticmethod
     def api():
         """:return: str with 'queue'"""
@@ -62,8 +72,8 @@ class Queue(RTEntity):
 
 class Ticket(RTEntity):
     """Ticket Object"""
-    def __init__(self, id, **kwargs):
-        super(Ticket, self).__init__(id)
+    def __init__(self, id, tracker, **kwargs):
+        super(Ticket, self).__init__(id, tracker)
 
         self.subject = kwargs.get('Subject')
         """Subject"""
@@ -123,8 +133,8 @@ class Ticket(RTEntity):
 class Attachment(RTEntity):
     """Attachment Object
     """
-    def __init__(self, id, **kwargs):
-        super(Attachment, self).__init__(id)
+    def __init__(self, id, tracker, **kwargs):
+        super(Attachment, self).__init__(id, tracker)
 
         self.filename = kwargs.get('Filename')
         """Filename"""
