@@ -86,6 +86,9 @@ class Ticket(RTEntity):
         self.owner = kwargs.get('Owner')
         """Owner"""
 
+        self.requestors = kwargs.get('Requestors')
+        """Requestors"""
+
         self.creator = kwargs.get('Creator')
         """Creator"""
 
