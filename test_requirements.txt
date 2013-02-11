@@ -1,4 +1,5 @@
 pytest
 pytest-pep8
+pytest-cov
 httpretty
-#https://github.com/z4r/HTTPretty/tarball/master
+python-coveralls

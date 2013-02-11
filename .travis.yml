@@ -7,4 +7,6 @@ install:
 before_script:
   - pip install -r test_requirements.txt --use-mirrors
 script:
-  - py.test --doctest-modules --pep8 rtkit -v
+  - py.test --doctest-modules --pep8 rtkit -v --cov rtkit --cov-report term-missing
+after_success:
+  - coveralls

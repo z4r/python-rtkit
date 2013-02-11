@@ -3,7 +3,10 @@ Request Tracker REST Interface
 ==============================
 
 .. image:: https://secure.travis-ci.org/z4r/python-rtkit.png?branch=master
-   :target: http://travis-ci.org/z4r/python-rtkit
+    :target: http://travis-ci.org/z4r/python-rtkit
+
+.. image:: https://coveralls.io/repos/z4r/python-rtkit/badge.png?branch=master
+    :target: https://coveralls.io/r/z4r/python-rtkit
 
 `Best Practical RT`_ (Request Tracker) data access python module for REST interface.
 
