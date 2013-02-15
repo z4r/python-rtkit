@@ -33,9 +33,9 @@ class TktTestCase(unittest.TestCase):
 
     @httprettified
     def assertPost(self, body, expected, content=None):
-        HTTPretty.register_uri(HTTPretty.POST, 'http://rtkit.test/ticket/new', body=body)
+        HTTPretty.register_uri(HTTPretty.POST, 'http://rtkit.test/:POST:', body=body)
         response = self.resource.post(
-            path='ticket/new',
+            path=':POST:',
             payload=content or self.content,
             headers={'User-Agent': 'rtkit-ua', }
         )
@@ -43,22 +43,22 @@ class TktTestCase(unittest.TestCase):
         self.assertEqual(response.status_int, expected.status_int)
         self.assertEqual(response.status, expected.status)
         self.assertEqual(HTTPretty.last_request.method, HTTPretty.POST)
-        self.assertEqual(HTTPretty.last_request.path, '/ticket/new')
+        self.assertEqual(HTTPretty.last_request.path, '/:POST:')
         self.assertEqual(HTTPretty.last_request.body, expected.req_body)
         self.assertEqual(dict(HTTPretty.last_request.headers), expected.req_headers)
 
     @httprettified
     def assertGet(self, body, expected):
-        HTTPretty.register_uri(HTTPretty.GET, 'http://rtkit.test/ticket/1', body=body)
+        HTTPretty.register_uri(HTTPretty.GET, 'http://rtkit.test/:GET:', body=body)
         response = self.resource.get(
-            path='ticket/1',
+            path=':GET:',
             headers={'User-Agent': 'rtkit-ua', }
         )
         self.assertEqual(response.parsed, expected.parsed)
         self.assertEqual(response.status_int, expected.status_int)
         self.assertEqual(response.status, expected.status)
         self.assertEqual(HTTPretty.last_request.method, HTTPretty.GET)
-        self.assertEqual(HTTPretty.last_request.path, '/ticket/1')
+        self.assertEqual(HTTPretty.last_request.path, '/:GET:')
         self.assertEqual(HTTPretty.last_request.body, expected.req_body)
         self.assertEqual(dict(HTTPretty.last_request.headers), expected.req_headers)
 
@@ -229,4 +229,55 @@ TimeLeft: 0
                 'attachment_2': file('rtkit/tests/attach/x2.txt'),
                 'attachment_3': file('rtkit/tests/attach/1x1.gif'),
             }
+        )
+
+    def test_read_tkt_comment(self):
+        expected = Expected(
+            parsed=[[
+                ('id', '2831'),
+                ('Ticket', '216'),
+                ('TimeTaken', '0'),
+                ('Type', 'Create'),
+                ('Field', ''),
+                ('OldValue', ''),
+                ('NewValue', ''),
+                ('Data', ''),
+                ('Description', 'Ticket created by john.foo'),
+                ('Content', 'this is a\nmultiline\nticket'),
+                ('Creator', 'john.foo'),
+                ('Created', '2013-02-14 18:00:45'),
+                ('Attachments', '\n1315: untitled (38b)')
+            ]],
+            status_int=200,
+            status='200 Ok',
+            req_body='',
+            req_headers=self.req_headers_get,
+        )
+        self.assertGet(
+            body='''RT/4.0.5-116-g591e06a 200 Ok
+
+# 2/2 (id/2831/total)
+
+id: 2831
+Ticket: 216
+TimeTaken: 0
+Type: Create
+Field:
+OldValue:
+NewValue:
+Data:
+Description: Ticket created by john.foo
+
+Content: this is a
+         multiline
+         ticket
+
+
+Creator: john.foo
+Created: 2013-02-14 18:00:45
+
+Attachments:
+             1315: untitled (38b)
+''',
+            expected=expected,
         )
