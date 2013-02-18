@@ -1,6 +1,7 @@
 import logging
 import errors
 import forms
+import os
 from urllib2 import Request, HTTPError
 from rtkit.parser import RTParser
 
@@ -46,6 +47,23 @@ class RTResource(object):
         except HTTPError as e:
             response = e
         return self.response_cls(req, response)
+
+    @classmethod
+    def from_rtrc(cls, auth, filename=None, ):
+        if filename is None:
+            filename = os.path.expanduser("~/.rtrc")
+        fd = open(filename, 'r')
+        config = {}
+        for line in fd.readlines():
+            line = line.strip()
+            key, val = line.split(" ", 1)
+            config[key] = val
+        tracker = cls(
+            "%s/REST/1.0/" % (config['server'], ),
+            config['user'],
+            config['passwd'],
+            auth)
+        return tracker
 
 
 class RTResponse(object):
