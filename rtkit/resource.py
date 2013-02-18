@@ -1,8 +1,8 @@
 import logging
-import errors
-import forms
+import re
 import os
 from urllib2 import Request, HTTPError
+from rtkit import forms, errors
 from rtkit.parser import RTParser
 
 
@@ -49,21 +49,19 @@ class RTResource(object):
         return self.response_cls(req, response)
 
     @classmethod
-    def from_rtrc(cls, auth, filename=None, ):
-        if filename is None:
-            filename = os.path.expanduser("~/.rtrc")
-        fd = open(filename, 'r')
-        config = {}
-        for line in fd.readlines():
-            line = line.strip()
-            key, val = line.split(" ", 1)
-            config[key] = val
-        tracker = cls(
-            "%s/REST/1.0/" % (config['server'], ),
-            config['user'],
-            config['passwd'],
-            auth)
-        return tracker
+    def from_rtrc(cls, auth, filename=None, **kwargs):
+        try:
+            with open(filename or os.path.expanduser("~/.rtrc"), 'r') as fd:
+                config = dict([re.split('\s+', line.strip()) for line in fd.readlines()])
+            return cls(
+                '{0}/REST/1.0/'.format(config['server']),
+                config['user'],
+                config['passwd'],
+                auth,
+                **kwargs
+            )
+        except (KeyError, IOError):
+            raise errors.RTBadConfiguration
 
 
 class RTResponse(object):

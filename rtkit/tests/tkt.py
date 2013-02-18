@@ -32,6 +32,14 @@ class TktTestCase(unittest.TestCase):
         })
 
     @httprettified
+    def test_http_error(self):
+        HTTPretty.register_uri(HTTPretty.GET, 'http://rtkit.test/:GET:', status=404, body='Not Found')
+        response = self.resource.get(':GET:', headers={'User-Agent': 'rtkit-ua', })
+        self.assertEqual(response.parsed, [[]])
+        self.assertEqual(response.status_int, 500)
+        self.assertEqual(response.status, 'Not Found')
+
+    @httprettified
     def assertPost(self, body, expected, content=None):
         HTTPretty.register_uri(HTTPretty.POST, 'http://rtkit.test/:POST:', body=body)
         response = self.resource.post(
@@ -163,7 +171,7 @@ TimeLeft: 0
             expected=expected,
         )
 
-    def _test_read_tkt_notfound(self):
+    def test_read_tkt_notfound(self):
         expected = Expected(
             parsed=[],
             status_int=404,
@@ -176,7 +184,7 @@ TimeLeft: 0
             expected=expected,
         )
 
-    def _test_read_tkt_credentials(self):
+    def test_read_tkt_credentials(self):
         expected = Expected(
             parsed=[],
             status_int=401,

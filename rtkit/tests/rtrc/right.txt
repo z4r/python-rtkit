@@ -1,0 +1,3 @@
+server http://rt.server/
+user   RT_USERNAME
+passwd RT_PASSWORD

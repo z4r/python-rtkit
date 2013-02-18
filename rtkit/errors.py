@@ -1,4 +1,5 @@
 __all__ = [
+    'RTBadConfiguration',
     'RTUnknownTypeError',
     'RTInvalidError',
     'RTValueError',
@@ -6,6 +7,10 @@ __all__ = [
     'RTNotFoundError',
     'RTUnauthorized',
 ]
+
+
+class RTBadConfiguration(Exception):
+    pass
 
 
 class RTResourceError(Exception):
