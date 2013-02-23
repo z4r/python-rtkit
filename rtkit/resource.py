@@ -52,7 +52,7 @@ class RTResource(object):
     def from_rtrc(cls, auth, filename=None, **kwargs):
         try:
             with open(filename or os.path.expanduser("~/.rtrc"), 'r') as fd:
-                config = dict([re.split('\s+', line.strip()) for line in fd.readlines()])
+                config = dict([re.split('\s+', line.strip(), maxsplit=1) for line in fd.readlines()])
             return cls(
                 '{0}/REST/1.0/'.format(config['server']),
                 config['user'],
