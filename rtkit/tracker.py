@@ -25,8 +25,7 @@ class Tracker(RTResource):
 
     def search_tickets(self, query, order=None):
         """Search tickets
-
-           .. warning:: Not yet Implemented
+           :return: A list of :py:class:`rtkit.entities.Ticket` instances
         """
         content = {'query': query, 'format': 'l'}
         if order:
@@ -36,7 +35,6 @@ class Tracker(RTResource):
             data=urllib.urlencode(content),
         )
         response = self.response_cls(req, self.auth.open(req))
-        #response = self.post('search/ticket', {'content':content})
         tickets = [Ticket(tracker=self, **dict(d)) for d in response.parsed]
         return tickets
 
