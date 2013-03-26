@@ -23,12 +23,14 @@ class Tracker(RTResource):
         """:return: An instance of :py:class:`rtkit.entities.Ticket`"""
         return self._get_entity(Ticket, value)
 
-    def search_tickets(self, query, order):
+    def search_tickets(self, query, order=None):
         """Search tickets
 
            .. warning:: Not yet Implemented
         """
         content = {'query': query, 'format': 'l'}
+        if order:
+            content['orderby'] = order
         req = urllib2.Request(
             url=self.auth.url + 'search/ticket',
             data=urllib.urlencode(content),
