@@ -7,6 +7,12 @@ Request Tracker REST Interface
 
 .. image:: https://coveralls.io/repos/z4r/python-rtkit/badge.png?branch=master
     :target: https://coveralls.io/r/z4r/python-rtkit
+    
+.. image:: https://pypip.in/v/python-rtkit/badge.png
+   :target: https://crate.io/packages/python-rtkit/
+
+.. image:: https://pypip.in/d/python-rtkit/badge.png
+   :target: https://crate.io/packages/python-rtkit/
 
 `Best Practical RT`_ (Request Tracker) data access python module for REST interface.
 
