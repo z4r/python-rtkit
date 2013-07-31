@@ -152,10 +152,6 @@ def _content_encode(value):
     """
     if 'Text' in value:
         value['Text'] = '\n '.join(value['Text'].splitlines())
-    value = dict([(
-        urllib.quote(k) if k.startswith('CF-') else k,
-        urllib.quote(v) if k.startswith('CF-') else v
-    ) for k, v in value.iteritems()])
     return '\n'.join(['{0}: {1}'.format(k, v) for k, v in value.iteritems()])
 
 
