@@ -8,6 +8,7 @@ class RTParser(object):
 
     HEADER = re.compile(r'^RT/(?P<v>.+)\s+(?P<s>(?P<i>\d+).+)')
     COMMENT = re.compile(r'^#\s+.+$')
+    SYNTAX_COMMENT = re.compile(r'^>>\s+.+$')
     SECTION = re.compile(r'^--', re.M | re.U)
 
     @classmethod
@@ -73,10 +74,13 @@ class RTParser(object):
 
             >>> RTParser.decode_comment(['# c1: c2', 'spam: 1', 'ham: 2, 3', 'eggs:'])
             [('c1', 'c2')]
-            >>>
+            >>> RTParser.decode_comment(['# Syntax error.', '>> c1: c2', 'ham: 2, 3', 'eggs:'])
+            [('c1', 'c2')]
         """
-        lines = filter(cls.COMMENT.match, lines)
-        return [(k.strip('# '), v.strip(' ')) for k, v in [l.split(':', 1) for l in lines]]
+        flines = filter(cls.COMMENT.match, lines)
+        if len(flines) == 1 and flines[0] == '# Syntax error.':
+            flines = [l.strip('>> ') for l in filter(cls.SYNTAX_COMMENT.match, lines)]
+        return [(k.strip('# '), v.strip(' ')) for k, v in [l.split(':', 1) for l in flines]]
 
     @classmethod
     def build(cls, body):
