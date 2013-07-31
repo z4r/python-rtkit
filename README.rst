@@ -303,6 +303,22 @@ Usually your requests will be something like this.
         logger.error(e.response.status_int)
         logger.error(e.response.status)
         logger.error(e.response.parsed)
+        
+Custom Fields
+-------------
+
+To create or update a tkt with Custom Fields you must use this notation::
+
+    content = {
+        'content': {
+            'Queue': 1,
+            'Subject' : 'New Ticket',
+            'Text' : 'My useless\ntext on\nthree lines.',
+            'CR.{Need For Approval}': 'Yes' 
+        }
+    }
+
+.. warning:: With RT/3.8 you can't use ``?`` inside the names of your custom fields, with RT/3.6 ``/()`` too.
 
 .. _license:
 
