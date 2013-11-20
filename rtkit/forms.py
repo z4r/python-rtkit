@@ -148,10 +148,11 @@ def _content_encode(value):
     ...     'Action' : 'comment',
     ...     'Text' : 'Comment\nwith\nseveral\nlines',
     ... })
-    'Action: comment\nText: Comment\n with\n several\n lines'
+    'Action: comment\nText: Comment%0A+with%0A+several%0A+lines'
     """
     if 'Text' in value:
         value['Text'] = '\n '.join(value['Text'].splitlines())
+        value['Text'] = url_quote(value['Text'])
     return '\n'.join(['{0}: {1}'.format(k, v) for k, v in value.iteritems()])
 
 
@@ -161,7 +162,7 @@ def url_quote(s, charset='utf-8', safe='/:'):
         s = s.encode(charset)
     elif not isinstance(s, str):
         s = str(s)
-    return urllib.quote(s, safe=safe)
+    return urllib.quote_plus(s, safe=safe)
 
 
 def to_bytestring(s):

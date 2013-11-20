@@ -9,4 +9,5 @@ before_script:
 script:
   - py.test --doctest-modules --pep8 rtkit -v --cov rtkit --cov-report term-missing
 after_success:
+  - pip install python-coveralls --use-mirrors
   - coveralls

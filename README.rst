@@ -137,8 +137,8 @@ Create ticket
     content = {
         'content': {
             'Queue': 1,#'', 2
-            'Subject' : 'New Ticket',
-            'Text' : 'My useless\ntext on\nthree lines.',
+            'Subject': 'New Ticket',
+            'Text': 'My useless\ntext on\nthree lines.',
         }
     }
     try:
@@ -287,13 +287,13 @@ Usually your requests will be something like this.
 
     try:
         params = {
-            'content' :{
-                'Action' : 'comment',
-                'Text' : 'Comment with attach',
-                'Attachment' : 'x.txt, 140x105.jpg',
+            'content': {
+                'Action': 'comment',
+                'Text': 'Comment with attach',
+                'Attachment': 'x.txt, 140x105.jpg',
             },
-            'attachment_1' : file('x.txt'),
-            'attachment_2' : file('140x105.jpg'),
+            'attachment_1': file('x.txt'),
+            'attachment_2': file('140x105.jpg'),
         }
         response = resource.post(path='ticket/16/comment', payload=params,)
         for r in response.parsed:

@@ -17,7 +17,7 @@ class TktTestCase(unittest.TestCase):
                 'Text': 'My useless\ntext on\nthree lines.',
             }
         }
-        self.req_body = 'content=Queue: 1\nText: My useless\n text on\n three lines.\nSubject: New Ticket'
+        self.req_body = 'content=Queue: 1\nText: My+useless%0A+text+on%0A+three+lines.\nSubject: New Ticket'
         self.req_headers_get = {
             'connection': 'close',
             'user-agent': 'rtkit-ua',
@@ -27,7 +27,7 @@ class TktTestCase(unittest.TestCase):
         }
         self.req_headers_post = self.req_headers_get.copy()
         self.req_headers_post.update({
-            'content-length': '76',
+            'content-length': '80',
             'content-type': 'application/x-www-form-urlencoded; charset=utf-8',
         })
 
@@ -221,7 +221,7 @@ TimeLeft: 0
             parsed=[[]],
             status_int=200,
             status='200 Ok',
-            req_body='--xXXxXXyYYzzz\r\nContent-Disposition: form-data; name="content"\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: 77\r\n\r\nAction: comment\nText: Comment with attach\nAttachment: x1.txt, x2.txt, 1x1.gif\r\n--xXXxXXyYYzzz\r\nContent-Disposition: form-data; name="attachment_2"; filename="rtkit/tests/attach/x2.txt"\r\nContent-Type: text/plain\r\nContent-Length: 15\r\n\r\nHello World!\n2\n\r\n--xXXxXXyYYzzz\r\nContent-Disposition: form-data; name="attachment_1"; filename="rtkit/tests/attach/x1.txt"\r\nContent-Type: text/plain\r\nContent-Length: 15\r\n\r\nHello World!\n1\n\r\n--xXXxXXyYYzzz\r\nContent-Disposition: form-data; name="attachment_3"; filename="rtkit/tests/attach/1x1.gif"\r\nContent-Type: image/gif\r\nContent-Length: 35\r\n\r\nGIF87a\x01\x00\x01\x00\x80\x00\x00\xcc\xcc\xcc\x96\x96\x96,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;\r\n--xXXxXXyYYzzz--\r\n',
+            req_body='--xXXxXXyYYzzz\r\nContent-Disposition: form-data; name="content"\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: 77\r\n\r\nAction: comment\nText: Comment+with+attach\nAttachment: x1.txt, x2.txt, 1x1.gif\r\n--xXXxXXyYYzzz\r\nContent-Disposition: form-data; name="attachment_2"; filename="rtkit/tests/attach/x2.txt"\r\nContent-Type: text/plain\r\nContent-Length: 15\r\n\r\nHello World!\n2\n\r\n--xXXxXXyYYzzz\r\nContent-Disposition: form-data; name="attachment_1"; filename="rtkit/tests/attach/x1.txt"\r\nContent-Type: text/plain\r\nContent-Length: 15\r\n\r\nHello World!\n1\n\r\n--xXXxXXyYYzzz\r\nContent-Disposition: form-data; name="attachment_3"; filename="rtkit/tests/attach/1x1.gif"\r\nContent-Type: image/gif\r\nContent-Length: 35\r\n\r\nGIF87a\x01\x00\x01\x00\x80\x00\x00\xcc\xcc\xcc\x96\x96\x96,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;\r\n--xXXxXXyYYzzz--\r\n',
             req_headers=self.req_headers_post,
         )
         self.assertPost(
