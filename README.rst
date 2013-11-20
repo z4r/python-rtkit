@@ -337,3 +337,9 @@ References
 
 .. _Best Practical RT: http://bestpractical.com/rt/
 .. _Request Tracker Wiki: http://requesttracker.wikia.com/wiki/REST
+
+
+.. image:: https://d2weczhvl823v0.cloudfront.net/z4r/python-rtkit/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
+
