@@ -2,7 +2,7 @@ import base64
 import unittest
 from httpretty import httprettified, HTTPretty
 from rtkit.resource import RTResource
-from rtkit.authenticators import BasicAuthenticator, CookieAuthenticator
+from rtkit.authenticators import BasicAuthenticator, CookieAuthenticator, QueryStringAuthenticator
 
 
 class BasicAuthTestCase(unittest.TestCase):
@@ -60,3 +60,23 @@ class CookieAuthTestCase(unittest.TestCase):
         self.assertEqual(HTTPretty.latest_requests[1].path, '/ticket/1')
         self.assertEqual(HTTPretty.latest_requests[1].method, 'GET')
         self.assertEqual(HTTPretty.latest_requests[1].body, '')
+
+
+class QueryStringAuthTestCase(unittest.TestCase):
+    def setUp(self):
+        self.resource = RTResource('http://rtkit.test/', 'USER', 'PASS', QueryStringAuthenticator)
+
+    @httprettified
+    def test_auth(self):
+        HTTPretty.register_uri(
+            HTTPretty.GET,
+            'http://rtkit.test/ticket/1',
+            responses=[
+                HTTPretty.Response(body='RT/3.8.10 200 Ok\n\n# Ticket 1 does not exist.\n\n\n', status=200),
+            ]
+        )
+        self.resource.get(
+            path='ticket/1',
+            headers={'User-Agent': 'rtkit-ua', }
+        )
+        self.assertEqual(HTTPretty.latest_requests[0].path, '/ticket/1?user=USER&pass=PASS')

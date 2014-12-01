@@ -4,6 +4,7 @@
 * And the current implementations are:
     * :py:class:`~rtkit.authenticators.BasicAuthenticator`
     * :py:class:`~rtkit.authenticators.CookieAuthenticator`
+    * :py:class:`~rtkit.authenticators.QueryStringAuthenticator`
     * :py:class:`~rtkit.authenticators.KerberosAuthenticator`
 
 .. seealso::
@@ -16,6 +17,7 @@ import os
 import urllib
 import urllib2
 import cookielib
+from urlparse import urlparse, urlsplit, parse_qs, urlunsplit
 
 __all__ = [
     'BasicAuthenticator',
@@ -110,6 +112,47 @@ class CookieAuthenticator(AbstractAuthenticator):
         self.opener.open(
             urllib2.Request(self.url, urllib.urlencode(data))
         )
+
+
+class QueryStringAuthenticator(AbstractAuthenticator):
+    """Authenticate against server using a querystring
+
+    .. doctest::
+
+        from rtkit.resource import RTResource
+        from rtkit.authenticators import QueryStringAuthenticator
+        from rtkit.errors import RTResourceError
+
+        from rtkit import set_logging
+        import logging
+        set_logging('debug')
+        logger = logging.getLogger('rtkit')
+
+        resource = RTResource('http://<HOST>/REST/1.0/', '<USER>', '<PWD>', QueryStringAuthenticator)
+    """
+
+    def __init__(self, username, password, url):
+        super(QueryStringAuthenticator, self).__init__(username, password, url, QueryStringAuthHandler(username, password))
+
+
+class QueryStringAuthHandler(urllib2.BaseHandler):
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+
+    def default_open(self, request):
+        scheme, netloc, path, query_string, fragment = urlsplit(request.get_full_url())
+        query_params = parse_qs(query_string)
+        query_params['user'] = self.username
+        query_params['pass'] = self.password
+
+        request = urllib2.Request(
+            url=urlunsplit((scheme, netloc, path, urllib.urlencode(query_params, doseq=True), fragment)),
+            data=request.data,
+            headers=request.headers
+        )
+
+        return urllib2.urlopen(request)
 
 
 class KerberosAuthenticator(AbstractAuthenticator):
