@@ -106,7 +106,7 @@ Cookie-based Authentication
 
     resource = RTResource('http://<HOST>/REST/1.0/', '<USER>', '<PWD>', CookieAuthenticator)
 
-QueryString-based Authentication
+QueryString Authentication
 ---------------------------
 
 ::
