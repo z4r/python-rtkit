@@ -106,6 +106,22 @@ Cookie-based Authentication
 
     resource = RTResource('http://<HOST>/REST/1.0/', '<USER>', '<PWD>', CookieAuthenticator)
 
+QueryString Authentication
+---------------------------
+
+::
+
+    from rtkit.resource import RTResource
+    from rtkit.authenticators import QueryStringAuthenticator
+    from rtkit.errors import RTResourceError
+
+    from rtkit import set_logging
+    import logging
+    set_logging('debug')
+    logger = logging.getLogger('rtkit')
+
+    resource = RTResource('http://<HOST>/REST/1.0/', '<USER>', '<PWD>', QueryStringAuthenticator)
+
 Kerberos Authentication
 ---------------------------
 
