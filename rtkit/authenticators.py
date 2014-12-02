@@ -17,11 +17,12 @@ import os
 import urllib
 import urllib2
 import cookielib
-from urlparse import urlparse, urlsplit, parse_qs, urlunsplit
+from urlparse import urlsplit, parse_qs, urlunsplit
 
 __all__ = [
     'BasicAuthenticator',
     'CookieAuthenticator',
+    'QueryStringAuthenticator',
     'KerberosAuthenticator',
 ]
 if os.environ.get('__GEN_DOCS__', None):

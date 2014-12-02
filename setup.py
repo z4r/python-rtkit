@@ -15,7 +15,7 @@ email = email.strip('<>')
 version = pkg.__version__
 classifiers = pkg.__classifiers__
 
-readme = open(os.path.join(wd, 'README.rst'),'r').readlines()
+readme = open(os.path.join(wd, 'README.rst'), 'r').readlines()
 description = readme[1]
 long_description = ''.join(readme)
 
@@ -35,8 +35,8 @@ setup(
     description=description,
     long_description=long_description,
     classifiers=classifiers,
-    install_requires = reqs,
+    install_requires=reqs,
     packages=find_packages(),
-    license = 'Apache License 2.0',
-    keywords ='RequestTracker REST',
+    license='Apache License 2.0',
+    keywords='RequestTracker REST',
 )
