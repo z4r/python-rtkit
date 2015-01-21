@@ -330,7 +330,7 @@ To create or update a tkt with Custom Fields you must use this notation::
             'Queue': 1,
             'Subject' : 'New Ticket',
             'Text' : 'My useless\ntext on\nthree lines.',
-            'CR.{Need For Approval}': 'Yes' 
+            'CF.{Need For Approval}': 'Yes' 
         }
     }
 
