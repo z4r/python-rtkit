@@ -1,7 +1,11 @@
 import logging
 import re
 import os
-from urllib2 import Request, HTTPError
+try:
+    from urllib.request import Request
+    from urllib.error import HTTPError
+except ImportError:
+    from urllib2 import Request, HTTPError
 from rtkit import forms, errors
 from rtkit.parser import RTParser
 

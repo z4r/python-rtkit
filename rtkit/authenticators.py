@@ -14,10 +14,23 @@
 
 """
 import os
-import urllib
-import urllib2
-import cookielib
-from urlparse import urlsplit, parse_qs, urlunsplit
+# for compatibility with Python 3.x
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
+try:
+    import urllib.request as urllib2
+except ImportError:
+    import urllib2
+try:
+    import http.cookiejar as cookielib
+except ImportError:
+    import cookielib
+try:
+    from urllib.parse import urlsplit, parse_qs, urlunsplit
+except ImportError:
+    from urlparse import urlsplit, parse_qs, urlunsplit
 
 __all__ = [
     'BasicAuthenticator',
@@ -111,7 +124,7 @@ class CookieAuthenticator(AbstractAuthenticator):
     def _login(self):
         data = {'user': self.username, 'pass': self.password}
         self.opener.open(
-            urllib2.Request(self.url, urllib.urlencode(data))
+            urllib2.Request(self.url, urlencode(data))
         )
 
 
@@ -148,7 +161,7 @@ class QueryStringAuthHandler(urllib2.BaseHandler):
         query_params['pass'] = self.password
 
         request = urllib2.Request(
-            url=urlunsplit((scheme, netloc, path, urllib.urlencode(query_params, doseq=True), fragment)),
+            url=urlunsplit((scheme, netloc, path, urlencode(query_params, doseq=True), fragment)),
             data=request.data,
             headers=request.headers
         )

@@ -1,4 +1,8 @@
-from itertools import ifilterfalse
+# for compatibility with Python 3.x
+try:
+    from itertools import filterfalse as ifilterfalse
+except ImportError:
+    from itertools import ifilterfalse
 import re
 from rtkit import comment
 
@@ -6,10 +10,10 @@ from rtkit import comment
 class RTParser(object):
     """ RFC5322 Parser - see https://tools.ietf.org/html/rfc5322"""
 
-    HEADER = re.compile(r'^RT/(?P<v>.+)\s+(?P<s>(?P<i>\d+).+)')
-    COMMENT = re.compile(r'^#\s+.+$')
-    SYNTAX_COMMENT = re.compile(r'^>>\s+.+$')
-    SECTION = re.compile(r'^--', re.M | re.U)
+    HEADER = re.compile(b'^RT/(?P<v>.+)\s+(?P<s>(?P<i>\d+).+)')
+    COMMENT = re.compile(b'^#\s+.+$')
+    SYNTAX_COMMENT = re.compile(b'^>>\s+.+$')
+    SECTION = re.compile(b'^--', re.M | re.U)
 
     @classmethod
     def parse(cls, body, decoder):
