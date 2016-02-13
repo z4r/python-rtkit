@@ -10,10 +10,10 @@ from rtkit import comment
 class RTParser(object):
     """ RFC5322 Parser - see https://tools.ietf.org/html/rfc5322"""
 
-    HEADER = re.compile(b'^RT/(?P<v>.+)\s+(?P<s>(?P<i>\d+).+)')
-    COMMENT = re.compile(b'^#\s+.+$')
-    SYNTAX_COMMENT = re.compile(b'^>>\s+.+$')
-    SECTION = re.compile(b'^--', re.M | re.U)
+    HEADER = re.compile(r'^RT/(?P<v>.+)\s+(?P<s>(?P<i>\d+).+)')
+    COMMENT = re.compile(r'^#\s+.+$')
+    SYNTAX_COMMENT = re.compile(r'^>>\s+.+$')
+    SECTION = re.compile(r'^--', re.M | re.U)
 
     @classmethod
     def parse(cls, body, decoder):
@@ -66,7 +66,7 @@ class RTParser(object):
         """
         try:
             lines = ifilterfalse(cls.COMMENT.match, lines)
-            return [(k, v.strip(' ')) for k, v in [l.split(':', 1) for l in lines]]
+            return [(k.encode('utf-8'), v.strip(' ').encode('utf-8')) for k, v in [l.split(':', 1) for l in lines]]
         except (ValueError, IndexError):
             return []
 
@@ -84,7 +84,7 @@ class RTParser(object):
         flines = filter(cls.COMMENT.match, lines)
         if len(flines) == 1 and flines[0] == '# Syntax error.':
             flines = [l.strip('>> ') for l in filter(cls.SYNTAX_COMMENT.match, lines)]
-        return [(k.strip('# '), v.strip(' ')) for k, v in [l.split(':', 1) for l in flines]]
+        return [(k.strip('# ').encode('utf-8'), v.strip(' ').encode('utf-8')) for k, v in [l.split(':', 1) for l in flines]]
 
     @classmethod
     def build(cls, body):
@@ -121,4 +121,4 @@ class RTParser(object):
                 else:
                     logic_lines.append(line)
             return logic_lines
-        return [build_section(b) for b in cls.SECTION.split(body)]
+        return [build_section(b) for b in cls.SECTION.split(body.decode('utf-8'))]
