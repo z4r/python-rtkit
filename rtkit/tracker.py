@@ -1,5 +1,9 @@
 import urllib
-import urllib2
+# For compatibility with python 3.x
+try:
+    from urllib.request import Request
+except ImportError:
+    from urllib2 import Request
 from rtkit.resource import RTResource
 from rtkit.entities import *
 
@@ -30,7 +34,7 @@ class Tracker(RTResource):
         content = {'query': query, 'format': 'l'}
         if order:
             content['orderby'] = order
-        req = urllib2.Request(
+        req = Request(
             url=self.auth.url + 'search/ticket',
             data=urllib.urlencode(content),
         )

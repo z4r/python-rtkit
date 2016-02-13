@@ -1,7 +1,11 @@
 import logging
 import re
 import os
-from urllib2 import Request, HTTPError
+try:
+    from urllib.request import Request
+    from urllib.error import HTTPError
+except ImportError:
+    from urllib2 import Request, HTTPError
 from rtkit import forms, errors
 from rtkit.parser import RTParser
 
@@ -85,9 +89,9 @@ class RTResponse(object):
         self.logger.info(request.get_method())
         self.logger.info(request.get_full_url())
         self.logger.debug('HTTP_STATUS: {0}'.format(self.status))
-        r = RTParser.HEADER.match(self.body)
+        r = RTParser.HEADER.match(self.body.decode('utf-8'))
         if r:
-            self.status = r.group('s')
+            self.status = r.group('s').encode('utf-8')
             self.status_int = int(r.group('i'))
         else:
             self.logger.error('"{0}" is not valid'.format(self.body))

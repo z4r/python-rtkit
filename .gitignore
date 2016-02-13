@@ -9,3 +9,4 @@ ENV
 venv
 .cache
 docs/_build/
+build/

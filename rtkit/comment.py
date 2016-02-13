@@ -1,5 +1,5 @@
 import re
-from errors import *
+from .errors import *
 
 UNKNOWN_PATTERN = '# Unknown object type: (?P<t>.+)'
 UNKNOWN = re.compile(UNKNOWN_PATTERN)
