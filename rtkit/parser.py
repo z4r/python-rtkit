@@ -121,4 +121,4 @@ class RTParser(object):
                 else:
                     logic_lines.append(line)
             return logic_lines
-        return [build_section(b) for b in cls.SECTION.split(body.decode('utf-8'))]
+        return [build_section(b) for b in cls.SECTION.split(body.decode('utf-8', 'ignore'))]
