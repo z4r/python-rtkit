@@ -1,4 +1,3 @@
-# for compatibility with Python 3.x
 try:
     from itertools import filterfalse as ifilterfalse
 except ImportError:
@@ -109,7 +108,7 @@ class RTParser(object):
             ... a -- b
             ... '''
             >>> RTParser.build(body)
-            [['# a\\nb', 'spam: 1', 'ham: 2,\\n3'], ['# c', 'spam: 4', 'ham:'], ['a -- b']]
+            [[u'# a\\nb', u'spam: 1', u'ham: 2,\\n3'], [u'# c', u'spam: 4', u'ham:'], [u'a -- b']]
         """
         def build_section(section):
             logic_lines = []
