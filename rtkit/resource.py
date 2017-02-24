@@ -89,7 +89,7 @@ class RTResponse(object):
         self.logger.info(request.get_method())
         self.logger.info(request.get_full_url())
         self.logger.debug('HTTP_STATUS: {0}'.format(self.status))
-        r = RTParser.HEADER.match(self.body.decode('utf-8'))
+        r = RTParser.HEADER.match(self.body.decode('utf-8', 'ignore'))
         if r:
             self.status = r.group('s').encode('utf-8')
             self.status_int = int(r.group('i'))
