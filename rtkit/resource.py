@@ -12,7 +12,7 @@ from rtkit.parser import RTParser
 
 class RTResource(object):
     """REST Resource Object"""
-    def __init__(self, url, username, password, auth, **kwargs):
+    def __init__(self, url, username, password, auth, *handlers, **kwargs):
         """Create Connection Object
 
         :param url: Server URL
@@ -20,7 +20,7 @@ class RTResource(object):
         :param password: Password
         :param auth: Instance of :py:mod:`rtkit.authenticators`
         """
-        self.auth = auth(username, password, url)
+        self.auth = auth(username, password, url, *handlers)
         self.response_cls = kwargs.get('response_class', RTResponse)
         self.logger = logging.getLogger('rtkit')
 

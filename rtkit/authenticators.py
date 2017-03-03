@@ -89,12 +89,12 @@ class BasicAuthenticator(AbstractAuthenticator):
 
         resource = RTResource('http://<HOST>/REST/1.0/', '<USER>', '<PWD>', BasicAuthenticator)
     """
-    def __init__(self, username, password, url):
+    def __init__(self, username, password, url, *handlers):
         passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
         passman.add_password(None, url, username, password)
         super(BasicAuthenticator, self).__init__(
             username, password, url,
-            urllib2.HTTPBasicAuthHandler(passman)
+            urllib2.HTTPBasicAuthHandler(passman), *handlers
         )
 
 
@@ -114,10 +114,10 @@ class CookieAuthenticator(AbstractAuthenticator):
 
         resource = RTResource('http://<HOST>/REST/1.0/', '<USER>', '<PWD>', CookieAuthenticator)
     """
-    def __init__(self, username, password, url):
+    def __init__(self, username, password, url, *handlers):
         super(CookieAuthenticator, self).__init__(
             username, password, url,
-            urllib2.HTTPCookieProcessor(cookielib.LWPCookieJar())
+            urllib2.HTTPCookieProcessor(cookielib.LWPCookieJar()), *handlers
         )
         self._logged = False
 
@@ -145,8 +145,8 @@ class QueryStringAuthenticator(AbstractAuthenticator):
         resource = RTResource('http://<HOST>/REST/1.0/', '<USER>', '<PWD>', QueryStringAuthenticator)
     """
 
-    def __init__(self, username, password, url):
-        super(QueryStringAuthenticator, self).__init__(username, password, url, QueryStringAuthHandler(username, password))
+    def __init__(self, username, password, url, *handlers):
+        super(QueryStringAuthenticator, self).__init__(username, password, url, QueryStringAuthHandler(username, password), *handlers)
 
 
 class QueryStringAuthHandler(urllib2.BaseHandler):
@@ -191,7 +191,7 @@ class KerberosAuthenticator(AbstractAuthenticator):
 
         resource = RTResource(url, None, None, KerberosAuthenticator)
     """
-    def __init__(self, username, password, url):
+    def __init__(self, username, password, url, *handlers):
         try:
             from urllib2_kerberos import HTTPKerberosAuthHandler
         except ImportError:
@@ -199,5 +199,5 @@ class KerberosAuthenticator(AbstractAuthenticator):
 
         super(KerberosAuthenticator, self).__init__(
             username, password, url,
-            HTTPKerberosAuthHandler()
+            HTTPKerberosAuthHandler(), *handlers
         )
