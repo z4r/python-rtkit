@@ -29,3 +29,12 @@ Subject: Test Vulnerability for Script Dev
 '''
         parsed = RTParser.parse(body, RTParser.decode_comment)
         self.assertEqual(parsed, [[('queue', 'You may not create requests in that queue.')]])
+
+    def test_vertical_tab(self):
+        body = '''RT/3.8.7 200 Ok
+Field: first line
+       second\vline
+       third line
+'''
+        parsed = RTParser.parse(body, RTParser.decode)
+        self.assertEqual(parsed, [[('Field', 'first line\nsecond\x0bline\nthird line')]])

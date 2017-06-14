@@ -1,7 +1,9 @@
 try:
     from itertools import filterfalse as ifilterfalse
+    from cStringIO import StringIO
 except ImportError:
     from itertools import ifilterfalse
+    from io import StringIO
 import re
 from rtkit import comment
 
@@ -112,8 +114,11 @@ class RTParser(object):
         """
         def build_section(section):
             logic_lines = []
-            for line in filter(None, section.splitlines()):
-                if cls.HEADER.match(line):
+            for line in StringIO(section):
+                # strip trailing newline
+                if line and line[-1] == '\n':
+                    line = line.rstrip('\n')
+                if not line or cls.HEADER.match(line):
                     continue
                 if line[0].isspace():
                     logic_lines[-1] += '\n' + line.strip(' ')
