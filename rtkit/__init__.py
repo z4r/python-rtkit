@@ -1,5 +1,5 @@
 __author__ = 'Andrea De Marco <24erre@gmail.com>'
-__version__ = '0.7.1'
+__version__ = '0.7.2'
 __classifiers__ = [
     'Development Status :: 4 - Beta',
     'Intended Audience :: Developers',
@@ -11,7 +11,7 @@ __classifiers__ = [
     'Topic :: Internet :: WWW/HTTP',
     'Topic :: Software Development :: Libraries',
 ]
-__copyright__ = "2011, %s " % __author__
+__copyright__ = "2011 - 2017, %s " % __author__
 __license__ = """
    Copyright (C) %s
 
